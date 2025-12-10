@@ -1,13 +1,44 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Check, X, Server, Cloud, Users, Zap, Shield, HeartHandshake } from "lucide-react";
+import { Check, X, Server, Cloud, Users, Zap, Shield, HeartHandshake, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/navbar";
 
+type PlanType = "PERSONAL_MANAGED_MONTHLY" | "PERSONAL_MANAGED_YEARLY" | "BUSINESS_MANAGED" | "BUSINESS_SELFHOSTED";
+
 export default function PricingPage() {
+  const [loadingPlan, setLoadingPlan] = useState<PlanType | null>(null);
+
+  const handleCheckout = async (plan: PlanType, quantity: number = 1) => {
+    setLoadingPlan(plan);
+
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ plan, quantity }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Failed to start checkout. Please try again.");
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
@@ -95,10 +126,19 @@ export default function PricingPage() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/register">
-                    Start Free Trial
-                  </Link>
+                <Button 
+                  className="w-full" 
+                  onClick={() => handleCheckout("PERSONAL_MANAGED_MONTHLY")}
+                  disabled={loadingPlan !== null}
+                >
+                  {loadingPlan === "PERSONAL_MANAGED_MONTHLY" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Start Free Trial"
+                  )}
                 </Button>
               </CardFooter>
             </Card>
@@ -163,10 +203,19 @@ export default function PricingPage() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/register">
-                    Get Started
-                  </Link>
+                <Button 
+                  className="w-full"
+                  onClick={() => handleCheckout("BUSINESS_MANAGED", 5)}
+                  disabled={loadingPlan !== null}
+                >
+                  {loadingPlan === "BUSINESS_MANAGED" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Get Started"
+                  )}
                 </Button>
               </CardFooter>
             </Card>
@@ -307,10 +356,19 @@ export default function PricingPage() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/register">
-                    Get Started
-                  </Link>
+                <Button 
+                  className="w-full"
+                  onClick={() => handleCheckout("BUSINESS_SELFHOSTED", 3)}
+                  disabled={loadingPlan !== null}
+                >
+                  {loadingPlan === "BUSINESS_SELFHOSTED" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Get Started"
+                  )}
                 </Button>
               </CardFooter>
             </Card>

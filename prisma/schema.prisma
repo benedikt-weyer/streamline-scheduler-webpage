@@ -28,16 +28,18 @@ model Post {
 }
 
 model User {
-  id            String    @id
-  name          String //@db.Text
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String? //@db.Text
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  posts         Post[]
+  id             String         @id
+  name           String //@db.Text
+  email          String
+  emailVerified  Boolean        @default(false)
+  image          String? //@db.Text
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now()) @updatedAt
+  stripeCustomerId String?      @unique
+  sessions       Session[]
+  accounts       Account[]
+  posts          Post[]
+  subscriptions  Subscription[]
 
   @@unique([email])
   @@map("user")
@@ -86,4 +88,23 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String    @unique
+  stripePriceId        String
+  stripeCurrentPeriodEnd DateTime?
+  status               String    // active, canceled, incomplete, incomplete_expired, past_due, trialing, unpaid
+  plan                 String    // personal_managed_monthly, personal_managed_yearly, business_managed, business_selfhosted
+  quantity             Int       @default(1)
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([stripeSubscriptionId])
+  @@map("subscription")
 }

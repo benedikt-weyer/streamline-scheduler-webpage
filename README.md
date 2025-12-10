@@ -6,7 +6,9 @@ This is the centralized authentication and application launcher for the Streamli
 
 - 🔐 **Centralized Authentication** - Single account for all Streamline applications
 - 📧 **Email & Password** - Secure authentication with Better Auth
+- 💳 **Stripe Payments** - Subscription management with Stripe integration
 - 🎨 **Modern Landing Page** - Beautiful, responsive design with dark mode
+- 💰 **Flexible Pricing** - Personal and business plans, managed and self-hosted options
 - 👤 **User Profile** - Dashboard to manage your account and launch applications
 - 🔗 **Application Launcher** - Quick access to all Streamline apps from one place
 - 🔒 **Session Management** - Secure session handling and validation API
@@ -42,6 +44,7 @@ This is the centralized authentication and application launcher for the Streamli
    - `DATABASE_URL`: Your PostgreSQL connection string
    - `BETTER_AUTH_SECRET`: Generate with `openssl rand -base64 32`
    - `NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL`: URL of your Streamline Scheduler instance
+   - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Your Stripe keys (see [STRIPE_SETUP.md](./STRIPE_SETUP.md))
 
 4. **Set up the database**:
    ```bash
@@ -53,7 +56,10 @@ This is the centralized authentication and application launcher for the Streamli
    pnpm dev
    ```
 
-6. **Open your browser** to [http://localhost:3001](http://localhost:3001)
+6. **Set up Stripe** (optional, for payments):
+   See [STRIPE_SETUP.md](./STRIPE_SETUP.md) for detailed instructions.
+
+7. **Open your browser** to [http://localhost:2999](http://localhost:2999)
 
 ## Project Structure
 
