@@ -20,26 +20,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Ansible
+      - name: Install Ansible and dependencies
         run: |
           python -m pip install --upgrade pip
           pip install ansible
+          sudo apt-get update
+          sudo apt-get install -y sshpass
 
       - name: Install Ansible Galaxy requirements
         run: |
           ansible-galaxy collection install -r ansible/requirements.yml
 
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-
       - name: Export environment variables for Ansible
         run: |
           echo "VPS_HOST=${{ secrets.VPS_HOST }}" >> $GITHUB_ENV
           echo "VPS_USERNAME=${{ secrets.VPS_USERNAME }}" >> $GITHUB_ENV
+          echo "VPS_PASSWORD=${{ secrets.VPS_PASSWORD }}" >> $GITHUB_ENV
           echo "VPS_PORT=${{ secrets.VPS_PORT }}" >> $GITHUB_ENV
           echo "DOMAIN_NAME=${{ secrets.DOMAIN_NAME }}" >> $GITHUB_ENV
           echo "ENABLE_SSL=${{ secrets.ENABLE_SSL }}" >> $GITHUB_ENV

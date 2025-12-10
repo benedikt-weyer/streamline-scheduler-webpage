@@ -34,19 +34,22 @@ This guide explains how to deploy the Streamline Scheduler webpage to an IONOS V
 
 ## Local Setup
 
-### 1. Install Ansible
+### 1. Install Ansible and sshpass
 
 ```bash
 # macOS
-brew install ansible
+brew install ansible hudochenkov/sshpass/sshpass
 
 # Ubuntu/Debian
 sudo apt update
-sudo apt install ansible
+sudo apt install ansible sshpass
 
-# Using pip
+# Using pip (Ansible only)
 pip install ansible
+# Then install sshpass via your package manager
 ```
+
+**Note:** `sshpass` is required for password-based SSH authentication.
 
 ### 2. Install Ansible Collections
 
@@ -55,22 +58,32 @@ cd streamline-scheduler-webpage
 ansible-galaxy collection install -r ansible/requirements.yml
 ```
 
-### 3. Configure Inventory
+### 3. Set Environment Variables
 
-Edit `ansible/inventory/hosts.yml` with your VPS details:
+For password-based authentication, set these environment variables:
 
-```yaml
-all:
-  children:
-    production:
-      hosts:
-        streamline_vps:
-          ansible_host: "YOUR_VPS_IP"
-          ansible_user: "YOUR_SSH_USER"
-          ansible_port: 22
-          domain_name: "your-domain.com"
-          enable_ssl: true
+```bash
+export VPS_HOST="YOUR_VPS_IP"
+export VPS_USERNAME="YOUR_SSH_USER"
+export VPS_PASSWORD="YOUR_SSH_PASSWORD"
+export VPS_PORT="22"
+export DOMAIN_NAME="your-domain.com"
+export ENABLE_SSL="true"
 ```
+
+**Security Tip:** You can also create a `.env` file (never commit this!):
+
+```bash
+# .env
+VPS_HOST=123.45.67.89
+VPS_USERNAME=root
+VPS_PASSWORD=your-secure-password
+VPS_PORT=22
+DOMAIN_NAME=your-domain.com
+ENABLE_SSL=true
+```
+
+Then load it with: `source .env`
 
 ### 4. Test Connection
 
@@ -114,7 +127,7 @@ Configure the following secrets in your GitHub repository:
 |------------|-------------|---------|
 | `VPS_HOST` | VPS IP address | `123.45.67.89` |
 | `VPS_USERNAME` | SSH username | `root` or `ubuntu` |
-| `VPS_SSH_KEY` | Private SSH key | Contents of `~/.ssh/id_rsa` |
+| `VPS_PASSWORD` | SSH password | Your VPS password |
 | `VPS_PORT` | SSH port | `22` |
 | `DOMAIN_NAME` | Your domain | `streamline.example.com` |
 | `ENABLE_SSL` | Enable HTTPS | `true` or `false` |
@@ -197,14 +210,17 @@ Go to **Actions → Deploy to IONOS VPS → Run workflow**
 #### 1. Ansible Can't Connect to VPS
 
 ```bash
-# Test SSH connection manually
-ssh -i ~/.ssh/id_rsa user@your-vps-ip
+# Test SSH connection manually with password
+ssh user@your-vps-ip
 
-# Check SSH key permissions
-chmod 600 ~/.ssh/id_rsa
+# Verify environment variables are set
+echo $VPS_HOST $VPS_USERNAME
 
 # Verify VPS firewall allows SSH
 sudo ufw status
+
+# Test with sshpass
+sshpass -p 'your-password' ssh user@your-vps-ip
 ```
 
 #### 2. Docker Build Fails
@@ -356,13 +372,16 @@ sudo systemctl restart nginx
 
 ## Security Best Practices
 
-1. **Keep secrets secure**: Never commit `.env` files to version control
-2. **Use strong passwords**: Generate random passwords for database
-3. **Enable UFW firewall**: Only allow necessary ports
-4. **Keep system updated**: Regularly update packages
-5. **Monitor logs**: Check logs for suspicious activity
-6. **Backup regularly**: Automated daily database backups
-7. **Use SSL/HTTPS**: Always enable SSL in production
+1. **Keep secrets secure**: Never commit `.env` files or passwords to version control
+2. **Use strong passwords**: Generate random passwords for VPS, database, and auth secrets
+3. **Consider SSH keys**: For production, consider switching to SSH key authentication for better security
+4. **Enable UFW firewall**: Only allow necessary ports (22, 80, 443)
+5. **Keep system updated**: Regularly update packages
+6. **Monitor logs**: Check logs for suspicious activity
+7. **Backup regularly**: Automated daily database backups
+8. **Use SSL/HTTPS**: Always enable SSL in production
+9. **Limit SSH access**: Consider changing SSH port and using fail2ban
+10. **Regular security audits**: Review access logs and security settings
 
 ## Additional Resources
 

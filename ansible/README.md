@@ -95,15 +95,39 @@ ansible-playbook deploy.yml
 All sensitive configuration is passed via environment variables. These should be set before running playbooks:
 
 ```bash
+# VPS Access (Required)
 export VPS_HOST="your-vps-ip"
 export VPS_USERNAME="your-username"
+export VPS_PASSWORD="your-ssh-password"
+export VPS_PORT="22"
+
+# Application Configuration (Required)
 export DOMAIN_NAME="your-domain.com"
+export ENABLE_SSL="true"
 export BETTER_AUTH_URL="https://your-domain.com"
+export POSTGRES_USER="streamline"
 export POSTGRES_PASSWORD="your-secure-password"
-# ... etc
+export POSTGRES_DB="streamline_db"
+export BETTER_AUTH_SECRET="your-secret-key-at-least-32-chars"
+
+# Stripe (Required for payments)
+export STRIPE_SECRET_KEY="sk_live_..."
+export STRIPE_WEBHOOK_SECRET="whsec_..."
+export NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_..."
+export STRIPE_PRICE_PERSONAL_MANAGED_MONTHLY="price_..."
+export STRIPE_PRICE_PERSONAL_MANAGED_YEARLY="price_..."
+export STRIPE_PRICE_BUSINESS_MANAGED="price_..."
+export STRIPE_PRICE_BUSINESS_SELFHOSTED="price_..."
+
+# Application URLs
+export NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL="https://scheduler.your-domain.com"
+
+# Optional
+export BETTER_AUTH_GITHUB_CLIENT_ID="your-github-client-id"
+export BETTER_AUTH_GITHUB_CLIENT_SECRET="your-github-client-secret"
 ```
 
-Or use a `.env` file with `source .env`.
+**Tip:** Create a `.env` file (never commit this!) and load it with `source .env`.
 
 ## Running Specific Tasks
 
@@ -179,8 +203,9 @@ ansible-playbook deploy.yml -vvv
 ### Common Issues
 
 1. **SSH Connection Failed**
-   - Check `VPS_HOST`, `VPS_USERNAME`, `VPS_PORT`
-   - Verify SSH key is correct
+   - Check `VPS_HOST`, `VPS_USERNAME`, `VPS_PASSWORD`, `VPS_PORT`
+   - Verify password is correct
+   - Ensure `sshpass` is installed
    - Test manual SSH: `ssh user@host`
 
 2. **Permission Denied**
