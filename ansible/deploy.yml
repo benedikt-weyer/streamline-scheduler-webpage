@@ -47,10 +47,33 @@
         mode: '0600'
       tags: [deploy, env]
 
+    - name: Ensure Docker is installed
+      ansible.builtin.package:
+        name:
+          - docker.io
+          - docker-compose-plugin
+        state: present
+      tags: [deploy, docker, setup]
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+      tags: [deploy, docker, setup]
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+      tags: [deploy, docker, setup]
+
     - name: Stop existing containers
       community.docker.docker_compose_v2:
         project_src: "{{ app_dir }}"
         state: absent
+        docker_cli: /usr/bin/docker
       ignore_errors: yes
       tags: [deploy, docker]
 
@@ -61,6 +84,7 @@
         state: present
         pull: always
         recreate: always
+        docker_cli: /usr/bin/docker
       tags: [deploy, docker]
       register: docker_output
 
