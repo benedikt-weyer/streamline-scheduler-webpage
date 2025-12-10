@@ -62,7 +62,7 @@ export default function SubscriptionsPage() {
         // Fetch detailed subscription info
         const response = await fetch("/api/subscription/details");
         if (response.ok) {
-          const data = await response.json();
+          const data = (await response.json()) as SubscriptionDetails;
           setSubscriptionDetails(data);
         }
       } catch (error) {
@@ -72,7 +72,7 @@ export default function SubscriptionsPage() {
       }
     };
 
-    loadData();
+    void loadData();
   }, [router]);
 
   const handleManageBilling = async () => {
@@ -82,12 +82,12 @@ export default function SubscriptionsPage() {
         method: "POST",
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { url?: string; error?: string };
 
       if (data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(data.error || "Failed to create portal session");
+        throw new Error(data.error ?? "Failed to create portal session");
       }
     } catch (error) {
       console.error("Portal error:", error);
@@ -120,7 +120,7 @@ export default function SubscriptionsPage() {
       incomplete: { label: "Incomplete", variant: "outline" },
     };
 
-    const config = statusConfig[status] || { label: status, variant: "outline" };
+    const config = statusConfig[status] ?? { label: status, variant: "outline" as const };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
@@ -131,7 +131,7 @@ export default function SubscriptionsPage() {
       BUSINESS_MANAGED: "Business Managed",
       BUSINESS_SELFHOSTED: "Business Self-Hosted",
     };
-    return planNames[plan] || plan;
+    return planNames[plan] ?? plan;
   };
 
   const getPlanPrice = (plan: string) => {
@@ -141,7 +141,7 @@ export default function SubscriptionsPage() {
       BUSINESS_MANAGED: "€19.99/user/month",
       BUSINESS_SELFHOSTED: "€9.99/user/month",
     };
-    return planPrices[plan] || "";
+    return planPrices[plan] ?? "";
   };
 
   if (isLoading) {
@@ -275,7 +275,7 @@ export default function SubscriptionsPage() {
               <CardHeader>
                 <CardTitle>No Active Subscription</CardTitle>
                 <CardDescription>
-                  You don't have an active subscription. Choose a plan to get started.
+                  You don&apos;t have an active subscription. Choose a plan to get started.
                 </CardDescription>
               </CardHeader>
               <CardFooter>
@@ -390,7 +390,6 @@ export default function SubscriptionsPage() {
               </CardFooter>
             </Card>
           </div>
-        </div>
       </div>
     </div>
   );
