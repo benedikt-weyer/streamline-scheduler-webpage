@@ -1,103 +1,307 @@
-import { headers } from "next/headers";
+"use client";
+
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { 
+  Calendar, 
+  CheckSquare, 
+  Lock, 
+  Server, 
+  Palette, 
+  Zap, 
+  Moon, 
+  FolderTree,
+  Repeat,
+  ArrowRight,
+  Github,
+  Star
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Navbar } from "@/components/navbar";
 
-import { LatestPost } from "@/app/_components/post";
-import { auth } from "@/server/better-auth";
-import { getSession } from "@/server/better-auth/server";
-import { api, HydrateClient } from "@/trpc/server";
-
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await getSession();
-
-  if (session) {
-    void api.post.getLatest.prefetch();
-  }
-
+export default function Home() {
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      {/* Hero Section */}
+      <section className="container max-w-screen-2xl px-4 py-20 md:py-32">
+        <div className="mx-auto max-w-5xl text-center">
+          <Badge variant="secondary" className="mb-4">
+            <Star className="mr-1 h-3 w-3" />
+            Open Source & Self-Hosted
+          </Badge>
+          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+            Streamline Your
+            <span className="block bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Schedule & Tasks
+            </span>
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
+            An open source self-hostable calendar-todolist combo with end-to-end encryption.
+            Fast, efficient, and privacy-focused scheduling made simple.
+          </p>
+          
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Button size="lg" className="group gap-2 text-lg" asChild>
+              <Link href="#get-started">
+                Get Started
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="gap-2 text-lg" asChild>
+              <Link href="https://github.com/yourusername/streamline-scheduler" target="_blank">
+                <Github className="h-5 w-5" />
+                View on GitHub
+              </Link>
+            </Button>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
+        </div>
 
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              {!session ? (
-                <form>
-                  <button
-                    className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-                    formAction={async () => {
-                      "use server";
-                      const res = await auth.api.signInSocial({
-                        body: {
-                          provider: "github",
-                          callbackURL: "/",
-                        },
-                      });
-                      if (!res.url) {
-                        throw new Error("No URL returned from signInSocial");
-                      }
-                      redirect(res.url);
-                    }}
-                  >
-                    Sign in with Github
-                  </button>
-                </form>
-              ) : (
-                <form>
-                  <button
-                    className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-                    formAction={async () => {
-                      "use server";
-                      await auth.api.signOut({
-                        headers: await headers(),
-                      });
-                      redirect("/");
-                    }}
-                  >
-                    Sign out
-                  </button>
-                </form>
-              )}
+        {/* Hero Image/Demo Section */}
+        <div className="mx-auto mt-16 max-w-5xl">
+          <div className="relative rounded-xl border bg-card p-2 shadow-2xl">
+            <div className="aspect-video overflow-hidden rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10">
+              <div className="flex h-full items-center justify-center">
+                <div className="grid grid-cols-2 gap-4 p-8">
+                  <div className="flex items-center gap-3 rounded-lg border bg-background p-4">
+                    <CheckSquare className="h-6 w-6 text-primary" />
+                    <span className="text-sm font-medium">Task Management</span>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-lg border bg-background p-4">
+                    <Calendar className="h-6 w-6 text-primary" />
+                    <span className="text-sm font-medium">Calendar View</span>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-lg border bg-background p-4">
+                    <Lock className="h-6 w-6 text-primary" />
+                    <span className="text-sm font-medium">E2E Encrypted</span>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-lg border bg-background p-4">
+                    <Zap className="h-6 w-6 text-primary" />
+                    <span className="text-sm font-medium">Real-time Sync</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          {session?.user && <LatestPost />}
         </div>
-      </main>
-    </HydrateClient>
+      </section>
+
+      {/* Features Section */}
+      <section className="border-t bg-muted/30 py-20">
+        <div className="container max-w-screen-2xl px-4">
+          <div className="mx-auto mb-16 max-w-3xl text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Everything You Need
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Powerful features designed for privacy, efficiency, and ease of use
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <Calendar className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Calendar Management</CardTitle>
+                <CardDescription>
+                  Create, edit, and manage events with support for recurring patterns
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CheckSquare className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Todo List</CardTitle>
+                <CardDescription>
+                  Efficient task management with priorities, due dates, and smart scheduling
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Repeat className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Recurring Events & Tasks</CardTitle>
+                <CardDescription>
+                  Set up repeating events and tasks with flexible patterns
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Lock className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>End-to-End Encryption</CardTitle>
+                <CardDescription>
+                  All data is encrypted client-side before transmission. Zero-knowledge architecture.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Server className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Easy Self-Hosting</CardTitle>
+                <CardDescription>
+                  Simple deployment with Docker Compose. Own your data completely.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Palette className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Modern UI</CardTitle>
+                <CardDescription>
+                  Beautiful, responsive interface built with Next.js, React, and shadcn/ui
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Zap className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Real-time Sync</CardTitle>
+                <CardDescription>
+                  WebSocket-based real-time updates across all your devices
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <Moon className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Dark Mode</CardTitle>
+                <CardDescription>
+                  Full dark/light theme support with system preference detection
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <FolderTree className="mb-2 h-10 w-10 text-primary" />
+                <CardTitle>Project Organization</CardTitle>
+                <CardDescription>
+                  Hierarchical project structure with drag-and-drop reordering
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Tech Stack Section */}
+      <section className="py-20">
+        <div className="container max-w-screen-2xl px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Built with Modern Tech
+            </h2>
+            <p className="mb-12 text-lg text-muted-foreground">
+              Powered by industry-leading technologies for performance and security
+            </p>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                "Next.js 14+",
+                "React 19",
+                "TypeScript",
+                "Tailwind CSS",
+                "shadcn/ui",
+                "Rust Backend",
+                "PostgreSQL",
+                "End-to-End Encryption",
+                "Docker"
+              ].map((tech) => (
+                <div
+                  key={tech}
+                  className="rounded-lg border bg-card p-4 text-center font-medium transition-colors hover:bg-accent"
+                >
+                  {tech}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Get Started CTA Section */}
+      <section id="get-started" className="border-t bg-muted/30 py-20">
+        <div className="container max-w-screen-2xl px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Ready to Get Started?
+            </h2>
+            <p className="mb-8 text-lg text-muted-foreground">
+              Deploy your own instance in minutes with Docker Compose or explore the code on GitHub
+            </p>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+              <Button size="lg" className="gap-2" asChild>
+                <Link href="https://github.com/yourusername/streamline-scheduler#quick-start-with-docker-compose-recommended" target="_blank">
+                  <Server className="h-5 w-5" />
+                  Self-Host Now
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="gap-2" asChild>
+                <Link href="https://github.com/yourusername/streamline-scheduler" target="_blank">
+                  <Github className="h-5 w-5" />
+                  View Documentation
+                </Link>
+              </Button>
+            </div>
+
+            <div className="mt-12 rounded-lg border bg-card p-6">
+              <p className="mb-4 text-sm font-semibold">Quick Start with Docker Compose</p>
+              <div className="overflow-x-auto rounded bg-muted p-4 text-left">
+                <code className="text-sm">
+                  git clone https://github.com/yourusername/streamline-scheduler.git<br />
+                  cd streamline-scheduler<br />
+                  docker-compose up -d
+                </code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-8">
+        <div className="container max-w-screen-2xl px-4">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-sm text-muted-foreground">
+              © 2025 Streamline Scheduler. Licensed for personal self-hosting only.
+            </p>
+            <div className="flex gap-4">
+              <Link
+                href="https://github.com/yourusername/streamline-scheduler"
+                target="_blank"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                GitHub
+              </Link>
+              <Link
+                href="https://github.com/yourusername/streamline-scheduler#license"
+                target="_blank"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                License
+              </Link>
+              <Link
+                href="https://github.com/yourusername/streamline-scheduler#contributing"
+                target="_blank"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Contributing
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
