@@ -22,11 +22,11 @@ import { Navbar } from "@/components/navbar";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <Navbar />
       
       {/* Hero Section */}
-      <section className="container max-w-screen-2xl px-4 py-20 md:py-32">
+      <section className="container mx-auto max-w-screen-2xl px-4 py-20 md:py-32">
         <div className="mx-auto max-w-5xl text-center">
           <Badge variant="secondary" className="mb-4">
             <Star className="mr-1 h-3 w-3" />
@@ -90,7 +90,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="border-t bg-muted/30 py-20">
-        <div className="container max-w-screen-2xl px-4">
+        <div className="container mx-auto max-w-screen-2xl px-4">
           <div className="mx-auto mb-16 max-w-3xl text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
               Everything You Need
@@ -196,7 +196,7 @@ export default function Home() {
 
       {/* Tech Stack Section */}
       <section className="py-20">
-        <div className="container max-w-screen-2xl px-4">
+        <div className="container mx-auto max-w-screen-2xl px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
               Built with Modern Tech
@@ -231,7 +231,7 @@ export default function Home() {
 
       {/* Get Started CTA Section */}
       <section id="get-started" className="border-t bg-muted/30 py-20">
-        <div className="container max-w-screen-2xl px-4">
+        <div className="container mx-auto max-w-screen-2xl px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
               Ready to Get Started?
@@ -271,7 +271,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t py-8">
-        <div className="container max-w-screen-2xl px-4">
+        <div className="container mx-auto max-w-screen-2xl px-4">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
               © 2025 Streamline Scheduler. Licensed for personal self-hosting only.
