@@ -75,21 +75,16 @@
       tags: [deploy, docker, setup]
 
     - name: Stop existing containers
-      community.docker.docker_compose_v2:
-        project_src: "{{ app_dir }}"
-        state: absent
-        docker_cli: /usr/bin/docker
+      ansible.builtin.shell:
+        cmd: docker-compose down || true
+        chdir: "{{ app_dir }}"
       ignore_errors: yes
       tags: [deploy, docker]
 
     - name: Build and start Docker containers
-      community.docker.docker_compose_v2:
-        project_src: "{{ app_dir }}"
-        build: always
-        state: present
-        pull: always
-        recreate: always
-        docker_cli: /usr/bin/docker
+      ansible.builtin.shell:
+        cmd: docker-compose up -d --build --force-recreate
+        chdir: "{{ app_dir }}"
       tags: [deploy, docker]
       register: docker_output
 
