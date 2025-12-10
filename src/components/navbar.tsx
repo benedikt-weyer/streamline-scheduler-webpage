@@ -48,7 +48,7 @@ export function Navbar() {
               Pricing
             </Link>
             {user && (
-              <Link href="/subscriptions" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Link href="/profile/subscriptions" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Subscriptions
               </Link>
             )}

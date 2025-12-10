@@ -74,7 +74,7 @@ src/
 │   ├── login/             # Login page
 │   ├── register/          # Registration page
 │   ├── profile/           # User dashboard and app launcher
-│   ├── subscriptions/     # Subscription management page
+│   │   └── subscriptions/ # Subscription management page
 │   ├── pricing/           # Pricing page with plans
 │   ├── page.tsx           # Landing page
 │   └── layout.tsx         # Root layout
