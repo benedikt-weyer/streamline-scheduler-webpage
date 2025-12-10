@@ -1,11 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import { stripe } from "@/lib/stripe";
-import { db } from "@/server/db";
-import { env } from "@/env";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  // Lazy load dependencies to avoid build-time initialization
+  const { stripe } = await import("@/lib/stripe");
+  const { db } = await import("@/server/db");
+  const { env } = await import("@/env");
+  
   const body = await request.text();
   const signature = (await headers()).get("stripe-signature");
 
@@ -36,32 +41,32 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutSessionCompleted(session);
+        await handleCheckoutSessionCompleted(session, stripe, db);
         break;
       }
 
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionUpdate(subscription);
+        await handleSubscriptionUpdate(subscription, stripe, db);
         break;
       }
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionDeleted(subscription);
+        await handleSubscriptionDeleted(subscription, db);
         break;
       }
 
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
-        await handleInvoicePaymentSucceeded(invoice);
+        await handleInvoicePaymentSucceeded(invoice, stripe, db);
         break;
       }
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
-        await handleInvoicePaymentFailed(invoice);
+        await handleInvoicePaymentFailed(invoice, db);
         break;
       }
 
@@ -79,7 +84,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session,
+  stripe: Stripe,
+  db: any
+) {
   const userId = session.metadata?.userId;
   const plan = session.metadata?.plan;
 
@@ -117,7 +126,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   console.log(`Subscription created for user ${userId}: ${subscriptionId}`);
 }
 
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
+async function handleSubscriptionUpdate(
+  subscription: Stripe.Subscription,
+  stripe: Stripe,
+  db: any
+) {
   const existingSubscription = await db.subscription.findUnique({
     where: { stripeSubscriptionId: subscription.id },
   });
@@ -141,7 +154,10 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   console.log(`Subscription updated: ${subscription.id}`);
 }
 
-async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+async function handleSubscriptionDeleted(
+  subscription: Stripe.Subscription,
+  db: any
+) {
   await db.subscription.update({
     where: { stripeSubscriptionId: subscription.id },
     data: {
@@ -153,7 +169,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log(`Subscription deleted: ${subscription.id}`);
 }
 
-async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentSucceeded(
+  invoice: Stripe.Invoice,
+  stripe: Stripe,
+  db: any
+) {
   const sub = (invoice as any).subscription as string | Stripe.Subscription | null;
   if (!sub) {
     return;
@@ -176,7 +196,10 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log(`Invoice payment succeeded for subscription: ${subscriptionId}`);
 }
 
-async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentFailed(
+  invoice: Stripe.Invoice,
+  db: any
+) {
   const sub = (invoice as any).subscription as string | Stripe.Subscription | null;
   if (!sub) {
     return;

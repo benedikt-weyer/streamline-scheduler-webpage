@@ -1,11 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@/server/better-auth";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 interface RequestBody {
   token?: string;
 }
 
 export async function POST(request: NextRequest) {
+  // Lazy load dependencies to avoid build-time initialization
+  const { auth } = await import("@/server/better-auth");
+  
   try {
     const body = (await request.json()) as RequestBody;
     const { token } = body;

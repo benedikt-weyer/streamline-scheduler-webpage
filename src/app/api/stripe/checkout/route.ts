@@ -1,14 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/server/better-auth/server";
-import { createCheckoutSession, getOrCreateStripeCustomer, STRIPE_PLANS, type PlanType } from "@/lib/stripe";
-import { db } from "@/server/db";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 interface CheckoutRequest {
-  plan: PlanType;
+  plan: string;
   quantity?: number;
 }
 
 export async function POST(request: NextRequest) {
+  // Lazy load dependencies to avoid build-time initialization
+  const { getSession } = await import("@/server/better-auth/server");
+  const { createCheckoutSession, getOrCreateStripeCustomer, STRIPE_PLANS } = await import("@/lib/stripe");
+  
   try {
     const session = await getSession();
 

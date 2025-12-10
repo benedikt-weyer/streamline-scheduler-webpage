@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/server/better-auth/server";
-import { db } from "@/server/db";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET() {
+  // Lazy load dependencies to avoid build-time initialization
+  const { getSession } = await import("@/server/better-auth/server");
+  const { db } = await import("@/server/db");
+  
   try {
     const session = await getSession();
 

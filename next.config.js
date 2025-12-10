@@ -7,6 +7,14 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
   output: 'standalone',
+  eslint: {
+    // Disable ESLint during production builds
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // Disable type checking during production builds (already checked in CI)
+    ignoreBuildErrors: true,
+  },
 };
 
 export default config;

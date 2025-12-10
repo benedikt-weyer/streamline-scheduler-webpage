@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/server/better-auth/server";
-import { stripe } from "@/lib/stripe";
-import { db } from "@/server/db";
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 /**
  * Manual sync endpoint to pull subscriptions from Stripe
  * Useful when webhooks weren't set up initially
  */
 export async function POST() {
+  // Lazy load dependencies to avoid build-time initialization
+  const { getSession } = await import("@/server/better-auth/server");
+  const { stripe, STRIPE_PLANS } = await import("@/lib/stripe");
+  const { db } = await import("@/server/db");
+  
   try {
     const session = await getSession();
 
