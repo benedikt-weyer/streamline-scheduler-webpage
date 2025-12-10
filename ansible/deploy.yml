@@ -88,6 +88,13 @@
         append: yes
       tags: [deploy, docker, setup]
 
+    - name: Generate SSL certificates if they don't exist
+      ansible.builtin.shell:
+        cmd: bash generate-ssl-cert.sh
+        chdir: "{{ app_dir }}"
+        creates: "{{ app_dir }}/certs/cert.pem"
+      tags: [deploy, certs]
+
     - name: Stop existing containers
       ansible.builtin.shell:
         cmd: docker-compose down || true
