@@ -1,0 +1,83 @@
+name: Deploy to IONOS VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production with Ansible
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Install Ansible Galaxy requirements
+        run: |
+          ansible-galaxy collection install -r ansible/requirements.yml
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Export environment variables for Ansible
+        run: |
+          echo "VPS_HOST=${{ secrets.VPS_HOST }}" >> $GITHUB_ENV
+          echo "VPS_USERNAME=${{ secrets.VPS_USERNAME }}" >> $GITHUB_ENV
+          echo "VPS_PORT=${{ secrets.VPS_PORT }}" >> $GITHUB_ENV
+          echo "DOMAIN_NAME=${{ secrets.DOMAIN_NAME }}" >> $GITHUB_ENV
+          echo "ENABLE_SSL=${{ secrets.ENABLE_SSL }}" >> $GITHUB_ENV
+          echo "BETTER_AUTH_URL=${{ secrets.BETTER_AUTH_URL }}" >> $GITHUB_ENV
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
+          echo "BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}" >> $GITHUB_ENV
+          echo "BETTER_AUTH_GITHUB_CLIENT_ID=${{ secrets.BETTER_AUTH_GITHUB_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "BETTER_AUTH_GITHUB_CLIENT_SECRET=${{ secrets.BETTER_AUTH_GITHUB_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}" >> $GITHUB_ENV
+          echo "STRIPE_PRICE_PERSONAL_MANAGED_MONTHLY=${{ secrets.STRIPE_PRICE_PERSONAL_MANAGED_MONTHLY }}" >> $GITHUB_ENV
+          echo "STRIPE_PRICE_PERSONAL_MANAGED_YEARLY=${{ secrets.STRIPE_PRICE_PERSONAL_MANAGED_YEARLY }}" >> $GITHUB_ENV
+          echo "STRIPE_PRICE_BUSINESS_MANAGED=${{ secrets.STRIPE_PRICE_BUSINESS_MANAGED }}" >> $GITHUB_ENV
+          echo "STRIPE_PRICE_BUSINESS_SELFHOSTED=${{ secrets.STRIPE_PRICE_BUSINESS_SELFHOSTED }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL=${{ secrets.NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL }}" >> $GITHUB_ENV
+
+      - name: Test Ansible connection
+        run: |
+          cd ansible
+          ansible production -m ping
+
+      - name: Deploy with Ansible
+        run: |
+          cd ansible
+          ansible-playbook deploy.yml -v
+
+      - name: Deployment status
+        if: success()
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Application URL: https://${{ secrets.DOMAIN_NAME }}"
+
+      - name: Deployment failed
+        if: failure()
+        run: |
+          echo "❌ Deployment failed. Check the logs above for details."
+          exit 1
+

@@ -1,0 +1,89 @@
+---
+# Ansible playbook for deploying the application
+# Usage: ansible-playbook ansible/deploy.yml
+
+- name: Deploy Streamline Scheduler to VPS
+  hosts: production
+  become: no
+  gather_facts: yes
+
+  tasks:
+    - name: Ensure application directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      tags: [deploy]
+
+    - name: Copy application files to VPS
+      synchronize:
+        src: "{{ playbook_dir }}/../"
+        dest: "{{ app_dir }}/"
+        delete: yes
+        recursive: yes
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=node_modules"
+          - "--exclude=.next"
+          - "--exclude=.env*"
+          - "--exclude=ansible"
+      tags: [deploy]
+
+    - name: Create .env.production file
+      template:
+        src: templates/env.production.j2
+        dest: "{{ app_dir }}/.env.production"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+      tags: [deploy, env]
+
+    - name: Stop existing containers
+      community.docker.docker_compose:
+        project_src: "{{ app_dir }}"
+        state: absent
+      ignore_errors: yes
+      tags: [deploy, docker]
+
+    - name: Build and start Docker containers
+      community.docker.docker_compose:
+        project_src: "{{ app_dir }}"
+        build: yes
+        state: present
+        pull: yes
+        recreate: always
+      tags: [deploy, docker]
+      register: docker_output
+
+    - name: Wait for application to be ready
+      uri:
+        url: "http://localhost:{{ app_port }}"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 2
+      tags: [deploy, healthcheck]
+
+    - name: Clean up old Docker images
+      community.docker.docker_prune:
+        images: yes
+        images_filters:
+          dangling: true
+      tags: [deploy, docker, cleanup]
+
+    - name: Display deployment status
+      debug:
+        msg:
+          - "=========================================="
+          - "✅ Deployment Complete!"
+          - "=========================================="
+          - "Application URL: http://{{ domain_name }}"
+          - "Status: {{ result.status }}"
+          - ""
+          - "View logs: docker compose -f {{ app_dir }}/docker-compose.yml logs -f"
+          - "=========================================="
+      tags: [always]
+

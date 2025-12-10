@@ -114,12 +114,24 @@ See [INTEGRATION.md](./INTEGRATION.md) for detailed instructions on integrating 
 
 ## Available Scripts
 
-- `pnpm dev` - Start development server
+### Development
+- `pnpm dev` - Start development server (port 2999)
+- `pnpm lint` - Run ESLint
+- `pnpm typecheck` - Run TypeScript type checking
+- `pnpm format:check` - Check code formatting
+
+### Database
+- `pnpm db:push` - Push database schema changes
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:studio` - Open Prisma Studio
+
+### Production
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
-- `pnpm db:push` - Push database schema changes
-- `pnpm db:studio` - Open Prisma Studio
+- `pnpm preview` - Build and start production server
+
+### Deployment (Ansible)
+- See [ansible/README.md](./ansible/README.md) for Ansible commands
 
 ## Environment Variables
 
@@ -153,16 +165,57 @@ See `.env.example` for all required environment variables.
 
 ## Deployment
 
-### Vercel (Recommended)
+### Option 1: IONOS VPS with Docker & Ansible (Recommended for Full Control)
+
+Fully automated deployment using Ansible playbooks. See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete guide.
+
+**Quick Start:**
+
+1. **Initial VPS Setup** (run once):
+   ```bash
+   cd ansible
+   ansible-playbook setup.yml
+   ```
+
+2. **Deploy Application**:
+   ```bash
+   ansible-playbook deploy.yml
+   ```
+
+3. **Automated CI/CD**: Push to `main` branch triggers automatic deployment via GitHub Actions
+
+**Features:**
+- ✅ Docker containerization
+- ✅ PostgreSQL database included
+- ✅ Nginx reverse proxy
+- ✅ SSL/HTTPS with Let's Encrypt
+- ✅ Automated deployments
+- ✅ Zero-downtime updates
+
+### Option 2: Vercel (Easiest)
 
 1. Push your code to GitHub
 2. Import the project in Vercel
 3. Configure environment variables
 4. Deploy
 
-### Docker
+**Note:** You'll need to provide your own PostgreSQL database (use Railway, Supabase, or similar).
 
-Coming soon...
+### Option 3: Docker Compose (Local or VPS)
+
+```bash
+# Copy environment template
+cp env.production.template .env.production
+
+# Edit .env.production with your values
+nano .env.production
+
+# Start services
+docker compose up -d
+
+# View logs
+docker compose logs -f
+```
 
 ## Contributing
 
@@ -172,8 +225,15 @@ This is part of the Streamline ecosystem. For contributing guidelines, please se
 
 Licensed for personal self-hosting only. See the main Streamline Scheduler repository for full license details.
 
+## Documentation
+
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Complete deployment guide for VPS with Ansible
+- **[STRIPE_SETUP.md](./STRIPE_SETUP.md)** - Stripe integration and payment setup
+- **[INTEGRATION.md](./INTEGRATION.md)** - Integrating other applications with this auth system
+- **[ansible/README.md](./ansible/README.md)** - Ansible playbook documentation
+
 ## Support
 
-- Documentation: Check this README and INTEGRATION.md
+- Documentation: Check this README and linked documentation files
 - Issues: Open an issue on GitHub
 - Streamline Scheduler: See the main scheduler repository
