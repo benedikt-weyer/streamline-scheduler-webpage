@@ -43,6 +43,11 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold">Streamline</span>
           </Link>
+          <nav className="hidden items-center gap-6 md:flex">
+            <Link href="/pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Pricing
+            </Link>
+          </nav>
         </div>
         
         <div className="flex items-center gap-4">

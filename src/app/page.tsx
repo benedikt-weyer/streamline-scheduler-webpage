@@ -51,9 +51,14 @@ export default function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="gap-2 text-lg" asChild>
+              <Link href="/pricing">
+                View Pricing
+              </Link>
+            </Button>
+            <Button size="lg" variant="ghost" className="gap-2 text-lg" asChild>
               <Link href="https://github.com/yourusername/streamline-scheduler" target="_blank">
                 <Github className="h-5 w-5" />
-                View on GitHub
+                GitHub
               </Link>
             </Button>
           </div>
@@ -277,6 +282,12 @@ export default function Home() {
               © 2025 Streamline Scheduler. Licensed for personal self-hosting only.
             </p>
             <div className="flex gap-4">
+              <Link
+                href="/pricing"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Pricing
+              </Link>
               <Link
                 href="https://github.com/yourusername/streamline-scheduler"
                 target="_blank"
