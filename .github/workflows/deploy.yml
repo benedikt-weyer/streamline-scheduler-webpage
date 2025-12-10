@@ -25,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ansible
           sudo apt-get update
-          sudo apt-get install -y sshpass
+          sudo apt-get install -y sshpass rsync
 
       - name: Install Ansible Galaxy requirements
         run: |

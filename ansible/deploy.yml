@@ -18,7 +18,7 @@
       tags: [deploy]
 
     - name: Copy application files to VPS
-      synchronize:
+      ansible.posix.synchronize:
         src: "{{ playbook_dir }}/../"
         dest: "{{ app_dir }}/"
         delete: yes
@@ -29,6 +29,7 @@
           - "--exclude=.next"
           - "--exclude=.env*"
           - "--exclude=ansible"
+        use_ssh_args: yes
       tags: [deploy]
 
     - name: Create .env.production file
@@ -41,18 +42,18 @@
       tags: [deploy, env]
 
     - name: Stop existing containers
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ app_dir }}"
         state: absent
       ignore_errors: yes
       tags: [deploy, docker]
 
     - name: Build and start Docker containers
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ app_dir }}"
-        build: yes
+        build: always
         state: present
-        pull: yes
+        pull: always
         recreate: always
       tags: [deploy, docker]
       register: docker_output
@@ -69,7 +70,7 @@
 
     - name: Clean up old Docker images
       community.docker.docker_prune:
-        images: yes
+        images: true
         images_filters:
           dangling: true
       tags: [deploy, docker, cleanup]
@@ -80,10 +81,10 @@
           - "=========================================="
           - "✅ Deployment Complete!"
           - "=========================================="
-          - "Application URL: http://{{ domain_name }}"
+          - "Application URL: {% if enable_ssl | bool %}https{% else %}http{% endif %}://{{ domain_name }}"
           - "Status: {{ result.status }}"
           - ""
-          - "View logs: docker compose -f {{ app_dir }}/docker-compose.yml logs -f"
+          - "View logs: cd {{ app_dir }} && docker compose logs -f"
           - "=========================================="
       tags: [always]
 
