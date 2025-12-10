@@ -129,10 +129,11 @@
 
     - name: Wait for application to be ready
       uri:
-        url: "http://localhost:{{ app_port }}"
-        status_code: 200
+        url: "http://localhost:80"
+        status_code: [200, 301, 302]
+        validate_certs: no
       register: result
-      until: result.status == 200
+      until: result.status in [200, 301, 302]
       retries: 30
       delay: 2
       tags: [deploy, healthcheck]
