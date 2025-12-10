@@ -101,6 +101,24 @@
         chdir: "{{ app_dir }}"
       tags: [deploy, docker]
       register: docker_output
+      ignore_errors: yes
+
+    - name: Check database container logs on failure
+      ansible.builtin.shell:
+        cmd: docker-compose logs db
+        chdir: "{{ app_dir }}"
+      when: docker_output.rc != 0
+      register: db_logs
+
+    - name: Display database logs
+      ansible.builtin.debug:
+        var: db_logs.stdout_lines
+      when: docker_output.rc != 0
+
+    - name: Fail if Docker containers didn't start
+      ansible.builtin.fail:
+        msg: "Docker containers failed to start. Check logs above."
+      when: docker_output.rc != 0
 
     - name: Wait for application to be ready
       uri:
