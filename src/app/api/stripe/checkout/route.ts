@@ -38,14 +38,6 @@ export async function POST(request: NextRequest) {
       session.user.name
     );
 
-    // Update user with Stripe customer ID if not set
-    if (!session.user.stripeCustomerId) {
-      await db.user.update({
-        where: { id: session.user.id },
-        data: { stripeCustomerId },
-      });
-    }
-
     // Create checkout session
     const origin = request.headers.get("origin") || "http://localhost:2999";
     const checkoutSession = await createCheckoutSession({
