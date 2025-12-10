@@ -68,16 +68,22 @@ src/
 ├── app/
 │   ├── api/
 │   │   ├── auth/          # Better Auth API routes
+│   │   ├── stripe/        # Stripe checkout, webhook, portal
+│   │   ├── subscription/  # Subscription status and details
 │   │   └── validate-session/ # Session validation for integrations
 │   ├── login/             # Login page
 │   ├── register/          # Registration page
 │   ├── profile/           # User dashboard and app launcher
+│   ├── subscriptions/     # Subscription management page
+│   ├── pricing/           # Pricing page with plans
 │   ├── page.tsx           # Landing page
 │   └── layout.tsx         # Root layout
 ├── components/
 │   ├── ui/                # shadcn/ui components
 │   ├── navbar.tsx         # Navigation bar with auth state
 │   └── theme-switcher.tsx # Dark/light mode toggle
+├── lib/
+│   └── stripe.ts          # Stripe configuration and utilities
 └── server/
     ├── better-auth/       # Better Auth configuration
     └── db.ts              # Prisma client

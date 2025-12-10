@@ -233,6 +233,25 @@ Returns the current user's subscription status.
 }
 ```
 
+### `/api/subscription/details` (GET)
+Returns detailed subscription information including history.
+
+**Response:**
+```json
+{
+  "current": {
+    "id": "sub_123",
+    "plan": "PERSONAL_MANAGED_MONTHLY",
+    "status": "active",
+    "currentPeriodEnd": "2025-02-10T00:00:00.000Z",
+    "cancelAtPeriodEnd": false,
+    "quantity": 1,
+    "createdAt": "2025-01-10T00:00:00.000Z"
+  },
+  "history": []
+}
+```
+
 ## Subscription Lifecycle
 
 1. **User clicks "Get Started"** → Redirects to Stripe Checkout
