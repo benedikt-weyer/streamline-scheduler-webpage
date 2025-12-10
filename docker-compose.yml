@@ -1,5 +1,14 @@
 version: '3.8'
 
+networks:
+  # Connect to main VPS proxy network
+  proxy-network:
+    external: true
+    name: proxy-network
+  # Internal network for app and db
+  streamline-network:
+    driver: bridge
+
 services:
   # PostgreSQL Database
   db:
@@ -43,13 +52,15 @@ services:
         condition: service_healthy
     networks:
       - streamline-network
+      - proxy-network
     command: >
       sh -c "
         ./node_modules/.bin/prisma migrate deploy &&
         node server.js
       "
 
-  # Nginx reverse proxy
+  # Local nginx reverse proxy (only for local development)
+  # In production, the main VPS nginx will handle routing
   nginx:
     image: nginx:alpine
     container_name: streamline-nginx
@@ -64,12 +75,9 @@ services:
       - app
     networks:
       - streamline-network
+    profiles:
+      - local-dev
 
 volumes:
   postgres_data:
     driver: local
-
-networks:
-  streamline-network:
-    driver: bridge
-
