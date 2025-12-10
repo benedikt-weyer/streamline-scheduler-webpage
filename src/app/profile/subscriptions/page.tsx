@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Navbar } from "@/components/navbar";
 import { authClient } from "@/server/better-auth/client";
 import { 
   Calendar, 
@@ -147,11 +146,8 @@ export default function SubscriptionsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navbar />
-        <div className="container mx-auto flex flex-1 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -161,20 +157,17 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
-      
-      <div className="container mx-auto max-w-screen-xl px-4 py-20">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">My Subscriptions</h1>
-          <p className="text-muted-foreground">Manage your Streamline subscriptions and billing</p>
-        </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold">Subscriptions</h1>
+        <p className="text-muted-foreground">Manage your Streamline subscriptions and billing</p>
+      </div>
 
-        {/* Current Subscription */}
-        {subscriptionDetails?.current ? (
-          <div className="mb-8">
-            <h2 className="mb-4 text-xl font-semibold">Current Subscription</h2>
+      {/* Current Subscription */}
+      {subscriptionDetails?.current ? (
+        <div>
+          <h2 className="mb-4 text-xl font-semibold">Current Subscription</h2>
             
             <Card className="border-primary/50">
               <CardHeader>
@@ -277,7 +270,7 @@ export default function SubscriptionsPage() {
             </Card>
           </div>
         ) : (
-          <div className="mb-8">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>No Active Subscription</CardTitle>
@@ -295,10 +288,10 @@ export default function SubscriptionsPage() {
           </div>
         )}
 
-        {/* Subscription History */}
-        {subscriptionDetails?.history && subscriptionDetails.history.length > 0 && (
-          <div>
-            <h2 className="mb-4 text-xl font-semibold">Subscription History</h2>
+      {/* Subscription History */}
+      {subscriptionDetails?.history && subscriptionDetails.history.length > 0 && (
+        <div>
+          <h2 className="mb-4 text-xl font-semibold">Subscription History</h2>
             
             <div className="space-y-4">
               {subscriptionDetails.history.map((subscription) => (
@@ -332,9 +325,9 @@ export default function SubscriptionsPage() {
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="mt-12">
-          <h2 className="mb-4 text-xl font-semibold">Need Help?</h2>
+      {/* Quick Actions */}
+      <div>
+        <h2 className="mb-4 text-xl font-semibold">Need Help?</h2>
           
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Card>

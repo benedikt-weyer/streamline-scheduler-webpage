@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Navbar } from "@/components/navbar";
 import { authClient } from "@/server/better-auth/client";
 import { 
   Calendar, 
@@ -25,7 +24,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  image?: string;
+  image?: string | null;
 }
 
 interface Subscription {
@@ -67,7 +66,7 @@ export default function ProfilePage() {
         try {
           const subResponse = await fetch("/api/subscription/details");
           if (subResponse.ok) {
-            const subData = await subResponse.json();
+            const subData = (await subResponse.json()) as SubscriptionDetails;
             setSubscriptionDetails(subData);
           }
         } catch (error) {
@@ -81,7 +80,7 @@ export default function ProfilePage() {
       }
     };
 
-    checkSession();
+    void checkSession();
   }, [router]);
 
   const handleSignOut = async () => {
@@ -94,9 +93,7 @@ export default function ProfilePage() {
   };
 
   const handleLaunchScheduler = () => {
-    // Open the scheduler in a new tab
-    const schedulerUrl = env.NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL;
-    window.open(schedulerUrl, "_blank");
+    window.open(env.NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL as string, "_blank");
   };
 
   const handleSyncSubscription = async () => {
@@ -106,13 +103,13 @@ export default function ProfilePage() {
         method: "POST",
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { success?: boolean; syncedCount?: number; error?: string };
 
       if (data.success) {
-        alert(`Success! Synced ${data.syncedCount} subscription(s). Refreshing...`);
-        window.location.reload();
+        alert(`Success! Synced ${data.syncedCount ?? 0} subscription(s). Refreshing...`);
+        void window.location.reload();
       } else {
-        throw new Error(data.error || "Failed to sync");
+        throw new Error(data.error ?? "Failed to sync");
       }
     } catch (error) {
       console.error("Sync error:", error);
@@ -129,12 +126,12 @@ export default function ProfilePage() {
         method: "POST",
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { url?: string; error?: string };
 
       if (data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(data.error || "Failed to create portal session");
+        throw new Error(data.error ?? "Failed to create portal session");
       }
     } catch (error) {
       console.error("Portal error:", error);
@@ -165,7 +162,7 @@ export default function ProfilePage() {
       incomplete: { label: "Incomplete", variant: "outline" },
     };
 
-    const config = statusConfig[status] || { label: status, variant: "outline" };
+    const config = statusConfig[status] ?? { label: status, variant: "outline" as const };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
@@ -176,7 +173,7 @@ export default function ProfilePage() {
       BUSINESS_MANAGED: "Business Managed",
       BUSINESS_SELFHOSTED: "Business Self-Hosted",
     };
-    return planNames[plan] || plan;
+    return planNames[plan] ?? plan;
   };
 
   const getPlanPrice = (plan: string) => {
@@ -186,16 +183,13 @@ export default function ProfilePage() {
       BUSINESS_MANAGED: "€19.99/user/month",
       BUSINESS_SELFHOSTED: "€9.99/user/month",
     };
-    return planPrices[plan] || "";
+    return planPrices[plan] ?? "";
   };
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navbar />
-        <div className="container mx-auto flex flex-1 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -205,25 +199,22 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
-      
-      <div className="container mx-auto max-w-screen-xl px-4 py-20">
-        {/* Profile Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Welcome back, {user.name}!</h1>
-            <p className="text-muted-foreground">{user.email}</p>
-          </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
-
-        {/* Applications Section */}
+    <div className="space-y-8">
+      {/* Profile Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="mb-6 text-2xl font-semibold">Your Applications</h2>
+          <h1 className="text-3xl font-bold">Welcome back, {user.name}!</h1>
+          <p className="text-muted-foreground">{user.email}</p>
+        </div>
+        <Button variant="outline" onClick={handleSignOut}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
+        </Button>
+      </div>
+
+      {/* Applications Section */}
+      <div>
+        <h2 className="mb-6 text-2xl font-semibold">Your Applications</h2>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Streamline Scheduler App Card */}
@@ -263,9 +254,9 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Subscription Section */}
-        <div className="mt-12">
-          <h2 className="mb-6 text-2xl font-semibold">Subscription</h2>
+      {/* Subscription Section */}
+      <div>
+        <h2 className="mb-6 text-2xl font-semibold">Subscription</h2>
           
           {subscriptionDetails?.current ? (
             <div className="space-y-6">
@@ -437,11 +428,11 @@ export default function ProfilePage() {
               </CardFooter>
             </Card>
           )}
-        </div>
+      </div>
 
-        {/* Account Settings Section */}
-        <div className="mt-12">
-          <h2 className="mb-6 text-2xl font-semibold">Account Settings</h2>
+      {/* Account Settings Section */}
+      <div>
+        <h2 className="mb-6 text-2xl font-semibold">Account Settings</h2>
           
           <Card>
             <CardHeader>
@@ -465,7 +456,6 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </div>
       </div>
     </div>
   );
