@@ -31,32 +31,9 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
-    environment:
-      # Database
-      DATABASE_URL: postgresql://${POSTGRES_USER:-streamline}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-streamline_db}
-      
-      # Better Auth
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
-      
-      # Better Auth - GitHub OAuth (optional)
-      BETTER_AUTH_GITHUB_CLIENT_ID: ${BETTER_AUTH_GITHUB_CLIENT_ID:-}
-      BETTER_AUTH_GITHUB_CLIENT_SECRET: ${BETTER_AUTH_GITHUB_CLIENT_SECRET:-}
-      
-      # Stripe
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
-      
-      # Stripe Price IDs
-      STRIPE_PRICE_PERSONAL_MANAGED_MONTHLY: ${STRIPE_PRICE_PERSONAL_MANAGED_MONTHLY}
-      STRIPE_PRICE_PERSONAL_MANAGED_YEARLY: ${STRIPE_PRICE_PERSONAL_MANAGED_YEARLY}
-      STRIPE_PRICE_BUSINESS_MANAGED: ${STRIPE_PRICE_BUSINESS_MANAGED}
-      STRIPE_PRICE_BUSINESS_SELFHOSTED: ${STRIPE_PRICE_BUSINESS_SELFHOSTED}
-      
-      # Application URLs
-      NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL: ${NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL}
-      
+    env_file:
+      - .env
+    environment:     
       # Node environment
       NODE_ENV: production
     depends_on:
