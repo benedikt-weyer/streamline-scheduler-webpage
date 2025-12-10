@@ -49,6 +49,7 @@ export default function ProfilePage() {
   const [subscriptionDetails, setSubscriptionDetails] = useState<SubscriptionDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingPortal, setIsLoadingPortal] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -96,6 +97,29 @@ export default function ProfilePage() {
     // Open the scheduler in a new tab
     const schedulerUrl = env.NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL;
     window.open(schedulerUrl, "_blank");
+  };
+
+  const handleSyncSubscription = async () => {
+    setIsSyncing(true);
+    try {
+      const response = await fetch("/api/subscription/sync", {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Success! Synced ${data.syncedCount} subscription(s). Refreshing...`);
+        window.location.reload();
+      } else {
+        throw new Error(data.error || "Failed to sync");
+      }
+    } catch (error) {
+      console.error("Sync error:", error);
+      alert("Failed to sync subscriptions. Please try again.");
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const handleManageBilling = async () => {
@@ -390,10 +414,25 @@ export default function ProfilePage() {
                   Choose a plan to unlock premium features and support Streamline development.
                 </CardDescription>
               </CardHeader>
-              <CardFooter>
+              <CardFooter className="flex flex-col gap-3 sm:flex-row">
                 <Button onClick={() => router.push("/pricing")} className="gap-2">
                   View Plans
                   <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleSyncSubscription}
+                  disabled={isSyncing}
+                  className="gap-2"
+                >
+                  {isSyncing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Syncing...
+                    </>
+                  ) : (
+                    "Sync from Stripe"
+                  )}
                 </Button>
               </CardFooter>
             </Card>
