@@ -4,10 +4,16 @@
 
 - name: Deploy Streamline Scheduler to VPS
   hosts: production
-  become: no
+  become: yes
   gather_facts: yes
 
   tasks:
+    - name: Install rsync on VPS
+      ansible.builtin.package:
+        name: rsync
+        state: present
+      tags: [deploy, setup]
+
     - name: Ensure application directory exists
       file:
         path: "{{ app_dir }}"
