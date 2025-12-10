@@ -29,7 +29,7 @@
           - "--exclude=.next"
           - "--exclude=.env*"
           - "--exclude=ansible"
-        use_ssh_args: yes
+        dest_port: "{{ ansible_port }}"
       tags: [deploy]
 
     - name: Create .env.production file
