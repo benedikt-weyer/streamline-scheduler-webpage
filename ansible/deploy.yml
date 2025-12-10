@@ -53,10 +53,24 @@
         state: present
       tags: [deploy, docker, setup]
 
-    - name: Install docker-compose
+    - name: Install docker-compose v2
       ansible.builtin.get_url:
-        url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+        url: https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-linux-x86_64
         dest: /usr/local/bin/docker-compose
+        mode: '0755'
+      tags: [deploy, docker, setup]
+
+    - name: Create Docker CLI plugins directory
+      ansible.builtin.file:
+        path: /usr/local/lib/docker/cli-plugins
+        state: directory
+        mode: '0755'
+      tags: [deploy, docker, setup]
+
+    - name: Install docker buildx plugin
+      ansible.builtin.get_url:
+        url: https://github.com/docker/buildx/releases/download/v0.19.3/buildx-v0.19.3.linux-amd64
+        dest: /usr/local/lib/docker/cli-plugins/docker-buildx
         mode: '0755'
       tags: [deploy, docker, setup]
 
