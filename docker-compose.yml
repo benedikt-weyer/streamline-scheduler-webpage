@@ -25,6 +25,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        SKIP_ENV_VALIDATION: "1"
     container_name: streamline-app
     restart: unless-stopped
     ports:
