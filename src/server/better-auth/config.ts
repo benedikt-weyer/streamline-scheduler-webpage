@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
+import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -18,6 +19,7 @@ export const auth = betterAuth({
       redirectURI: "http://localhost:3000/api/auth/callback/github",
     },
   },
+  plugins: [nextCookies()], // this fixes the state_mismatch error
 });
 
 export type Session = typeof auth.$Infer.Session;
