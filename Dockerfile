@@ -50,7 +50,7 @@ RUN adduser --system --uid 1001 nextjs
 
 # Copy Prisma schema and generated client
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # Copy the build output
