@@ -1,67 +1,91 @@
 ## Deployment Architecture
 
-This application can be deployed in two modes:
-
-### 1. Local Development (with local nginx)
+### Local Development
 ```bash
 docker compose --profile local-dev up -d
 ```
 Access: `https://localhost`
 
-### 2. Production (VPS with main nginx proxy)
-```bash
-docker compose up -d
+### Production Deployment
+
+This application uses a **container registry + k3s** deployment model:
+
+1. **Build Phase** (this repository):
+   - GitHub Actions builds Docker image
+   - Pushes to GitHub Container Registry (GHCR)
+   - Tagged with branch name and commit SHA
+
+2. **Deploy Phase** (`streamline-vps` repository):
+   - VPS runs k3s (lightweight Kubernetes)
+   - Pulls images from GHCR
+   - Deploys to k3s cluster
+
+## Deployment Flow
+
+```
+Developer Push
+    ↓
+GitHub Actions (this repo)
+    ↓
+Build Docker Image
+    ↓
+Push to GHCR
+    ↓
+Trigger Deployment Webhook
+    ↓
+streamline-vps Repository
+    ↓
+Pull from GHCR
+    ↓
+Deploy to k3s
+    ↓
+Application Running
 ```
 
-In production:
-- App is exposed to the `proxy-network` (shared with main VPS nginx)
-- Main VPS nginx (from `streamline-vps` repo) handles routing
-- Subdomain configured via VPS infrastructure
+## Local Build and Push
 
-## VPS Deployment
+```bash
+# Build image
+docker build -t ghcr.io/benedikt-weyer/streamline-scheduler-webpage:latest .
 
-### Prerequisites
-1. Deploy main VPS infrastructure from `streamline-vps` repository
-2. Configure subdomain routing for this application
+# Login to GHCR
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 
-### Steps
+# Push image
+docker push ghcr.io/benedikt-weyer/streamline-scheduler-webpage:latest
+```
 
-1. **Configure subdomain** (from `streamline-vps` repository):
-   - Go to GitHub Actions → "Update Subdomain Configuration"
+## Deployment Steps
+
+1. **Make changes and push to main**:
+   ```bash
+   git add .
+   git commit -m "feat: your changes"
+   git push origin main
+   ```
+
+2. **Image is automatically built**:
+   - GitHub Actions builds and pushes to GHCR
+   - Image tagged with branch and SHA
+
+3. **Deploy via VPS repository**:
+   - Go to `streamline-vps` repository
+   - Actions → "Deploy Application to k3s"
+   - Select application and image tag
    - Click "Run workflow"
-   - Enter:
-     - Subdomain: `scheduler`
-     - Upstream host: `streamline-app` (container name)
-     - Upstream port: `3000`
-     - Domain: `yourdomain.com`
-     - Enable SSL: `true`
-
-2. **Deploy application** (from this repository):
-   - Trigger GitHub Actions deployment workflow
-   - Or manually:
-     ```bash
-     ansible-playbook -i ansible/inventory/hosts.yml ansible/deploy.yml
-     ```
-
-3. **Access**:
-   - `https://scheduler.yourdomain.com`
 
 ## Network Architecture
 
 ```
 Internet
     ↓
-Main VPS Nginx (port 443)
+k3s Ingress Controller (Traefik)
     ↓
-proxy-network (Docker)
+Kubernetes Service (streamline-app)
     ↓
-streamline-app:3000
+Pod: streamline-app:3000
     ↓
-streamline-network (Docker)
-    ↓
-streamline-db:5432
+Pod: streamline-db:5432
 ```
 
-The application connects to two networks:
-- `proxy-network`: Shared external network for main VPS nginx
-- `streamline-network`: Internal network for app-database communication
+All managed within k3s cluster on the VPS.
