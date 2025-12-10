@@ -11,14 +11,15 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: false, // Set to true if you want email verification
   },
-  socialProviders: {
+  socialProviders: env.BETTER_AUTH_GITHUB_CLIENT_ID && env.BETTER_AUTH_GITHUB_CLIENT_SECRET ? {
     github: {
       clientId: env.BETTER_AUTH_GITHUB_CLIENT_ID,
       clientSecret: env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
       redirectURI: "http://localhost:3000/api/auth/callback/github",
     },
-  },
+  } : {},
   plugins: [nextCookies()], // this fixes the state_mismatch error
 });
 

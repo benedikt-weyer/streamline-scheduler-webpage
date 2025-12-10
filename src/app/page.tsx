@@ -45,7 +45,7 @@ export default function Home() {
           
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button size="lg" className="group gap-2 text-lg" asChild>
-              <Link href="#get-started">
+              <Link href="/register">
                 Get Started
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
