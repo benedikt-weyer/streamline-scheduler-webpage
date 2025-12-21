@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: planera-webpage-staging
+  name: plandera-webpage-staging
   labels:
-    name: planera-webpage-staging
+    name: plandera-webpage-staging
     environment: staging
 

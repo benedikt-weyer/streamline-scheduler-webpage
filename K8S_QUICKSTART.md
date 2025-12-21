@@ -1,6 +1,6 @@
 # Kubernetes Deployment Quick Start
 
-This is a quick reference for deploying the Planera Webpage to Kubernetes. For detailed information, see [KUBERNETES_DEPLOYMENT.md](./KUBERNETES_DEPLOYMENT.md).
+This is a quick reference for deploying the Plandera Webpage to Kubernetes. For detailed information, see [KUBERNETES_DEPLOYMENT.md](./KUBERNETES_DEPLOYMENT.md).
 
 ## Prerequisites
 
@@ -38,11 +38,11 @@ stringData:
 Update domains in ingress files if needed:
 
 - Staging: `k8s/staging/ingress.yaml`
-  - `staging-www.planera.app`
+  - `staging-www.plandera.app`
 
 - Production: `k8s/production/ingress.yaml`
-  - `www.planera.app`
-  - `planera.app` (redirects to www)
+  - `www.plandera.app`
+  - `plandera.app` (redirects to www)
 
 ## Configure DNS
 
@@ -74,7 +74,7 @@ kubectl create secret docker-registry ghcr-secret \
   --docker-server=ghcr.io \
   --docker-username=<username> \
   --docker-password=<token> \
-  --namespace=planera-webpage-staging
+  --namespace=plandera-webpage-staging
 kubectl apply -f k8s/staging/
 ```
 
@@ -85,7 +85,7 @@ kubectl create secret docker-registry ghcr-secret \
   --docker-server=ghcr.io \
   --docker-username=<username> \
   --docker-password=<token> \
-  --namespace=planera-webpage-production
+  --namespace=plandera-webpage-production
 kubectl apply -f k8s/production/
 ```
 
@@ -93,36 +93,36 @@ kubectl apply -f k8s/production/
 
 ```bash
 # Check pods
-kubectl get pods -n planera-webpage-staging
-kubectl get pods -n planera-webpage-production
+kubectl get pods -n plandera-webpage-staging
+kubectl get pods -n plandera-webpage-production
 
 # Check logs
-kubectl logs -f deployment/webpage -n planera-webpage-staging
-kubectl logs -f deployment/webpage -n planera-webpage-production
+kubectl logs -f deployment/webpage -n plandera-webpage-staging
+kubectl logs -f deployment/webpage -n plandera-webpage-production
 
 # Check ingress
-kubectl get ingress -n planera-webpage-staging
-kubectl get ingress -n planera-webpage-production
+kubectl get ingress -n plandera-webpage-staging
+kubectl get ingress -n plandera-webpage-production
 ```
 
 ## Common Commands
 
 ```bash
 # Restart deployment
-kubectl rollout restart deployment/webpage -n planera-webpage-production
+kubectl rollout restart deployment/webpage -n plandera-webpage-production
 
 # Scale replicas
-kubectl scale deployment/webpage --replicas=3 -n planera-webpage-production
+kubectl scale deployment/webpage --replicas=3 -n plandera-webpage-production
 
 # Rollback
-kubectl rollout undo deployment/webpage -n planera-webpage-production
+kubectl rollout undo deployment/webpage -n plandera-webpage-production
 
 # Access database
-kubectl port-forward svc/postgres 5432:5432 -n planera-webpage-production
+kubectl port-forward svc/postgres 5432:5432 -n plandera-webpage-production
 
 # Run migrations
-POD=$(kubectl get pod -l app=webpage -n planera-webpage-production -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n planera-webpage-production $POD -- pnpm prisma migrate deploy
+POD=$(kubectl get pod -l app=webpage -n plandera-webpage-production -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n plandera-webpage-production $POD -- pnpm prisma migrate deploy
 ```
 
 ## Troubleshooting
@@ -141,11 +141,11 @@ kubectl get certificates -n <namespace>
 ## Environment URLs
 
 - **Staging**: 
-  - Webpage: https://staging-www.planera.app
+  - Webpage: https://staging-www.plandera.app
 
 - **Production**:
-  - Webpage: https://www.planera.app
-  - Webpage: https://planera.app (redirects to www)
+  - Webpage: https://www.plandera.app
+  - Webpage: https://plandera.app (redirects to www)
 
 ## Workflow
 

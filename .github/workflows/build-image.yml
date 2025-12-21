@@ -43,9 +43,9 @@ jobs:
         id: tags
         run: |
           if [ "${{ inputs.environment }}" = "staging" ]; then
-            echo "tags=${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:staging-latest,${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:staging-${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "tags=${{ env.REGISTRY }}/${{ github.repository_owner }}/plandera-webpage:staging-latest,${{ env.REGISTRY }}/${{ github.repository_owner }}/plandera-webpage:staging-${{ github.sha }}" >> $GITHUB_OUTPUT
           else
-            echo "tags=${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:latest,${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "tags=${{ env.REGISTRY }}/${{ github.repository_owner }}/plandera-webpage:latest,${{ env.REGISTRY }}/${{ github.repository_owner }}/plandera-webpage:${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Build and push webpage image
@@ -77,8 +77,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Image:" >> $GITHUB_STEP_SUMMARY
           if [ "${{ inputs.environment }}" = "staging" ]; then
-            echo "- \`${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:staging-latest\`" >> $GITHUB_STEP_SUMMARY
+            echo "- \`${{ env.REGISTRY }}/${{ github.repository_owner }}/plandera-webpage:staging-latest\`" >> $GITHUB_STEP_SUMMARY
           else
-            echo "- \`${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:latest\`" >> $GITHUB_STEP_SUMMARY
+            echo "- \`${{ env.REGISTRY }}/${{ github.repository_owner }}/plandera-webpage:latest\`" >> $GITHUB_STEP_SUMMARY
           fi
 

@@ -38,7 +38,7 @@ jobs:
             --docker-server=${{ env.REGISTRY }} \
             --docker-username=${{ github.actor }} \
             --docker-password=${{ secrets.GITHUB_TOKEN }} \
-            --namespace=planera-webpage-staging \
+            --namespace=plandera-webpage-staging \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to staging
@@ -53,18 +53,18 @@ jobs:
       - name: Run database migrations
         run: |
           # Wait for webpage pod to be ready
-          kubectl wait --for=condition=ready pod -l app=webpage -n planera-webpage-staging --timeout=5m
+          kubectl wait --for=condition=ready pod -l app=webpage -n plandera-webpage-staging --timeout=5m
           
           # Run Prisma migrations
-          POD_NAME=$(kubectl get pod -l app=webpage -n planera-webpage-staging -o jsonpath='{.items[0].metadata.name}')
-          kubectl exec -n planera-webpage-staging $POD_NAME -- pnpm prisma migrate deploy || echo "Migration failed or no migrations needed"
+          POD_NAME=$(kubectl get pod -l app=webpage -n plandera-webpage-staging -o jsonpath='{.items[0].metadata.name}')
+          kubectl exec -n plandera-webpage-staging $POD_NAME -- pnpm prisma migrate deploy || echo "Migration failed or no migrations needed"
 
       - name: Wait for deployment
         run: |
-          kubectl rollout status deployment/webpage -n planera-webpage-staging --timeout=5m
+          kubectl rollout status deployment/webpage -n plandera-webpage-staging --timeout=5m
 
       - name: Verify deployment
         run: |
-          kubectl get pods -n planera-webpage-staging
-          kubectl get services -n planera-webpage-staging
-          kubectl get ingress -n planera-webpage-staging
+          kubectl get pods -n plandera-webpage-staging
+          kubectl get services -n plandera-webpage-staging
+          kubectl get ingress -n plandera-webpage-staging

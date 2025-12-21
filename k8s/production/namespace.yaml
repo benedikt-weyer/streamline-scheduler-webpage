@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: planera-webpage-production
+  name: plandera-webpage-production
   labels:
-    name: planera-webpage-production
+    name: plandera-webpage-production
     environment: production
 

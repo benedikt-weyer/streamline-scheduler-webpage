@@ -43,7 +43,7 @@ This is the centralized authentication and application launcher for the Plandera
    Edit `.env` and configure:
    - `DATABASE_URL`: Your PostgreSQL connection string
    - `BETTER_AUTH_SECRET`: Generate with `openssl rand -base64 32`
-   - `NEXT_PUBLIC_PLANERA_URL`: URL of your Plandera application instance
+   - `NEXT_PUBLIC_PLANDERA_URL`: URL of your Plandera application instance
    - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Your Stripe keys (see [STRIPE_SETUP.md](./STRIPE_SETUP.md))
 
 4. **Set up the database**:
@@ -140,7 +140,7 @@ See `.env.example` for all required environment variables.
 ### Required:
 - `DATABASE_URL` - PostgreSQL connection string
 - `BETTER_AUTH_SECRET` - Secret for session encryption
-- `NEXT_PUBLIC_PLANERA_URL` - URL of Plandera application
+- `NEXT_PUBLIC_PLANDERA_URL` - URL of Plandera application
 
 ### Optional:
 - `BETTER_AUTH_GITHUB_CLIENT_ID` - GitHub OAuth (optional)
