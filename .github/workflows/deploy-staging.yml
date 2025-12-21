@@ -1,0 +1,105 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/planera-webpage
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=staging-latest
+            type=sha,prefix=staging-,format=short
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-to-staging:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Create namespace if not exists
+        run: |
+          kubectl apply -f k8s/staging/namespace.yaml
+
+      - name: Create image pull secret
+        run: |
+          kubectl create secret docker-registry ghcr-secret \
+            --docker-server=${{ env.REGISTRY }} \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            --namespace=planera-webpage-staging \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy to staging
+        run: |
+          kubectl apply -f k8s/staging/postgres.yaml
+          kubectl apply -f k8s/staging/webpage.yaml
+          kubectl apply -f k8s/staging/ingress.yaml
+
+      - name: Run database migrations
+        run: |
+          # Wait for webpage pod to be ready
+          kubectl wait --for=condition=ready pod -l app=webpage -n planera-webpage-staging --timeout=5m
+          
+          # Run Prisma migrations
+          POD_NAME=$(kubectl get pod -l app=webpage -n planera-webpage-staging -o jsonpath='{.items[0].metadata.name}')
+          kubectl exec -n planera-webpage-staging $POD_NAME -- pnpm prisma migrate deploy || echo "Migration failed or no migrations needed"
+
+      - name: Wait for deployment
+        run: |
+          kubectl rollout status deployment/webpage -n planera-webpage-staging --timeout=5m
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods -n planera-webpage-staging
+          kubectl get services -n planera-webpage-staging
+          kubectl get ingress -n planera-webpage-staging
+

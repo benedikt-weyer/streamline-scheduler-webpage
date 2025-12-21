@@ -165,34 +165,30 @@ See `.env.example` for all required environment variables.
 
 ## Deployment
 
-### Option 1: IONOS VPS with Docker & Ansible (Recommended for Full Control)
+### Option 1: Kubernetes (Recommended for Production)
 
-Fully automated deployment using Ansible playbooks. See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete guide.
+Deploy to a Kubernetes cluster with staging and production environments. See [K8S_QUICKSTART.md](./K8S_QUICKSTART.md) for quick start.
 
 **Quick Start:**
+```bash
+# Deploy to staging (automatic on merge to main)
+git push origin main
 
-1. **Initial VPS Setup** (run once):
-   ```bash
-   cd ansible
-   ansible-playbook setup.yml
-   ```
-
-2. **Deploy Application**:
-   ```bash
-   ansible-playbook deploy.yml
-   ```
-
-3. **Automated CI/CD**: Push to `main` branch triggers automatic deployment via GitHub Actions
+# Deploy to production (manual with confirmation)
+# Go to GitHub Actions → "Deploy to Production" → Run workflow
+```
 
 **Features:**
-- ✅ Docker containerization
+- ✅ Separate staging and production namespaces
+- ✅ Automatic deployment via GitHub Actions
+- ✅ TLS certificates via cert-manager
+- ✅ Horizontal scaling support
+- ✅ Zero-downtime rolling updates
 - ✅ PostgreSQL database included
-- ✅ Nginx reverse proxy
-- ✅ SSL/HTTPS with Let's Encrypt
-- ✅ Automated deployments
-- ✅ Zero-downtime updates
 
-### Option 2: Vercel (Easiest)
+See [K8S_QUICKSTART.md](./K8S_QUICKSTART.md) for quick reference and detailed documentation.
+
+### Option 2: Vercel (Easiest for Quick Testing)
 
 1. Push your code to GitHub
 2. Import the project in Vercel
@@ -201,7 +197,7 @@ Fully automated deployment using Ansible playbooks. See [DEPLOYMENT.md](./DEPLOY
 
 **Note:** You'll need to provide your own PostgreSQL database (use Railway, Supabase, or similar).
 
-### Option 3: Docker Compose (Local or VPS)
+### Option 3: Docker Compose (Local Development)
 
 ```bash
 # Copy environment template
@@ -227,10 +223,11 @@ Licensed for personal self-hosting only. See the main Streamline Scheduler repos
 
 ## Documentation
 
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Complete deployment guide for VPS with Ansible
+- **[K8S_QUICKSTART.md](./K8S_QUICKSTART.md)** - Kubernetes deployment quick reference
 - **[STRIPE_SETUP.md](./STRIPE_SETUP.md)** - Stripe integration and payment setup
 - **[INTEGRATION.md](./INTEGRATION.md)** - Integrating other applications with this auth system
-- **[ansible/README.md](./ansible/README.md)** - Ansible playbook documentation
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Alternative deployment options
+- **[VPS-DEPLOYMENT.md](./VPS-DEPLOYMENT.md)** - Legacy VPS deployment with Ansible
 
 ## Support
 

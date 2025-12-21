@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: planera-webpage-production
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webpage-config
+  namespace: planera-webpage-production
+data:
+  POSTGRES_USER: webpage
+  POSTGRES_DB: webpage_db
+  NODE_ENV: production
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webpage-secrets
+  namespace: planera-webpage-production
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: changeme-production-REPLACE-WITH-STRONG-PASSWORD
+  DATABASE_URL: postgresql://webpage:changeme-production-REPLACE-WITH-STRONG-PASSWORD@postgres:5432/webpage_db
+  BETTER_AUTH_SECRET: changeme-production-better-auth-secret-REPLACE-WITH-STRONG-SECRET-at-least-32-chars
+  STRIPE_SECRET_KEY: sk_live_REPLACE-WITH-PRODUCTION-KEY
+  STRIPE_WEBHOOK_SECRET: whsec_REPLACE-WITH-PRODUCTION-SECRET
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: planera-webpage-production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: webpage-config
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: webpage-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: webpage-config
+              key: POSTGRES_DB
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - webpage
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - webpage
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: planera-webpage-production
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+  clusterIP: None
+
