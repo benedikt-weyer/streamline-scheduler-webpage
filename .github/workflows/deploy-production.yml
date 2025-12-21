@@ -46,6 +46,10 @@ jobs:
 
       - name: Create application secrets
         run: |
+          # Delete existing secret if it exists to ensure clean recreation
+          kubectl delete secret webpage-secrets -n plandera-webpage-production --ignore-not-found=true
+          
+          # Create the secret with all required keys
           kubectl create secret generic webpage-secrets \
             --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL_PRODUCTION }}" \
             --from-literal=BETTER_AUTH_SECRET="${{ secrets.BETTER_AUTH_SECRET_PRODUCTION }}" \
@@ -53,8 +57,7 @@ jobs:
             --from-literal=STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET_PRODUCTION }}" \
             --from-literal=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_PRODUCTION }}" \
             --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD_PRODUCTION }}" \
-            --namespace=plandera-webpage-production \
-            --dry-run=client -o yaml | kubectl apply -f -
+            --namespace=plandera-webpage-production
 
       - name: Create configmap
         run: |
