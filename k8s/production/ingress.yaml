@@ -9,7 +9,8 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  - host: www.planera.app
+  # New domain - plandera.com
+  - host: www.plandera.com
     http:
       paths:
       - path: /
@@ -19,7 +20,28 @@ spec:
             name: webpage
             port:
               number: 3000
-  - host: planera.app
+  - host: plandera.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webpage
+            port:
+              number: 3000
+  # Old domain - streamline-scheduler.com (shows rebrand page)
+  - host: www.streamline-scheduler.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webpage
+            port:
+              number: 3000
+  - host: streamline-scheduler.com
     http:
       paths:
       - path: /
@@ -31,7 +53,9 @@ spec:
               number: 3000
   tls:
   - hosts:
-    - www.planera.app
-    - planera.app
+    - www.plandera.com
+    - plandera.com
+    - www.streamline-scheduler.com
+    - streamline-scheduler.com
     secretName: production-webpage-tls
 

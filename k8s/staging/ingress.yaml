@@ -9,7 +9,19 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  - host: staging-www.planera.app
+  # New domain - plandera.com
+  - host: staging-www.plandera.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webpage
+            port:
+              number: 3000
+  # Old domain - streamline-scheduler.com (redirect to rebranded page)
+  - host: staging.streamline-scheduler.com
     http:
       paths:
       - path: /
@@ -21,6 +33,7 @@ spec:
               number: 3000
   tls:
   - hosts:
-    - staging-www.planera.app
+    - staging-www.plandera.com
+    - staging.streamline-scheduler.com
     secretName: staging-webpage-tls
 
