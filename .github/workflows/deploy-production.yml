@@ -44,6 +44,26 @@ jobs:
             --namespace=plandera-webpage-production \
             --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Create application secrets
+        run: |
+          kubectl create secret generic webpage-secrets \
+            --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL_PRODUCTION }}" \
+            --from-literal=BETTER_AUTH_SECRET="${{ secrets.BETTER_AUTH_SECRET_PRODUCTION }}" \
+            --from-literal=STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY_PRODUCTION }}" \
+            --from-literal=STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET_PRODUCTION }}" \
+            --from-literal=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_PRODUCTION }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD_PRODUCTION }}" \
+            --namespace=plandera-webpage-production \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create configmap
+        run: |
+          kubectl create configmap webpage-config \
+            --from-literal=NODE_ENV=production \
+            --from-literal=POSTGRES_DB=plandera_webpage_production \
+            --namespace=plandera-webpage-production \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Deploy to production
         run: |
           # Replace NEXT_PUBLIC_PLANDERA_URL in manifest
