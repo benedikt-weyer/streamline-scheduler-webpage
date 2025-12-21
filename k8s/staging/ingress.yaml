@@ -9,8 +9,8 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  # New domain - plandera.com
-  - host: staging-www.plandera.com
+  # New domain - plandera.com (staging subdomain)
+  - host: staging.plandera.com
     http:
       paths:
       - path: /
@@ -33,7 +33,7 @@ spec:
               number: 3000
   tls:
   - hosts:
-    - staging-www.plandera.com
+    - staging.plandera.com
     - staging.streamline-scheduler.com
     secretName: staging-webpage-tls
 

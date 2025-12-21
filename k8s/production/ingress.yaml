@@ -9,7 +9,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  # New domain - plandera.com
+  # New domain - plandera.com (with and without www)
   - host: www.plandera.com
     http:
       paths:
