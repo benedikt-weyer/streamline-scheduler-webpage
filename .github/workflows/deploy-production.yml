@@ -14,6 +14,10 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/plandera-webpage
   NEXT_PUBLIC_PLANDERA_URL: ${{ vars.NEXT_PUBLIC_PLANDERA_URL_PRODUCTION }}
+  PRODUCTION_DOMAIN_WWW: ${{ vars.PRODUCTION_DOMAIN_WWW || 'www.plandera.com' }}
+  PRODUCTION_DOMAIN: ${{ vars.PRODUCTION_DOMAIN || 'plandera.com' }}
+  OLD_DOMAIN_WWW: ${{ vars.OLD_DOMAIN_WWW || 'www.streamline-scheduler.com' }}
+  OLD_DOMAIN: ${{ vars.OLD_DOMAIN || 'streamline-scheduler.com' }}
 
 jobs:
   deploy-to-production:
@@ -75,8 +79,14 @@ jobs:
 
       - name: Deploy to production
         run: |
-          # Replace NEXT_PUBLIC_PLANDERA_URL in manifest
+          # Replace placeholders in webpage manifest
           sed -i "s|__NEXT_PUBLIC_PLANDERA_URL__|${{ env.NEXT_PUBLIC_PLANDERA_URL }}|g" k8s/production/webpage.yaml
+          
+          # Replace domain placeholders in ingress manifest
+          sed -i "s|__PRODUCTION_DOMAIN_WWW__|${{ env.PRODUCTION_DOMAIN_WWW }}|g" k8s/production/ingress.yaml
+          sed -i "s|__PRODUCTION_DOMAIN__|${{ env.PRODUCTION_DOMAIN }}|g" k8s/production/ingress.yaml
+          sed -i "s|__OLD_DOMAIN_WWW__|${{ env.OLD_DOMAIN_WWW }}|g" k8s/production/ingress.yaml
+          sed -i "s|__OLD_DOMAIN__|${{ env.OLD_DOMAIN }}|g" k8s/production/ingress.yaml
           
           kubectl apply -f k8s/production/postgres.yaml
           kubectl apply -f k8s/production/webpage.yaml

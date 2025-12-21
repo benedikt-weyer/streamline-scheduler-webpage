@@ -10,7 +10,7 @@ metadata:
 spec:
   rules:
   # New domain - plandera.com (staging subdomain)
-  - host: staging.plandera.com
+  - host: __STAGING_DOMAIN__
     http:
       paths:
       - path: /
@@ -21,7 +21,7 @@ spec:
             port:
               number: 3000
   # Old domain - streamline-scheduler.com (redirect to rebranded page)
-  - host: staging.streamline-scheduler.com
+  - host: __OLD_STAGING_DOMAIN__
     http:
       paths:
       - path: /
@@ -33,7 +33,7 @@ spec:
               number: 3000
   tls:
   - hosts:
-    - staging.plandera.com
-    - staging.streamline-scheduler.com
+    - __STAGING_DOMAIN__
+    - __OLD_STAGING_DOMAIN__
     secretName: staging-webpage-tls
 
