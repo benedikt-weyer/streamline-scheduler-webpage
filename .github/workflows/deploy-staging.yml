@@ -15,7 +15,9 @@ env:
   IMAGE_NAME: ${{ github.repository_owner }}/plandera-webpage
   NEXT_PUBLIC_PLANDERA_URL: ${{ vars.NEXT_PUBLIC_PLANDERA_URL_STAGING }}
   STAGING_DOMAIN: ${{ vars.STAGING_DOMAIN || 'staging.plandera.com' }}
+  STAGING_DOMAIN_WWW: ${{ vars.STAGING_DOMAIN_WWW || 'staging-www.plandera.com' }}
   OLD_STAGING_DOMAIN: ${{ vars.OLD_STAGING_DOMAIN || 'staging.streamline-scheduler.com' }}
+  OLD_STAGING_DOMAIN_WWW: ${{ vars.OLD_STAGING_DOMAIN_WWW || 'staging-www.streamline-scheduler.com' }}
 
 jobs:
   deploy-to-staging:
@@ -79,7 +81,9 @@ jobs:
           
           # Replace domain placeholders in ingress manifest
           sed -i "s|__STAGING_DOMAIN__|${{ env.STAGING_DOMAIN }}|g" k8s/staging/ingress.yaml
+          sed -i "s|__STAGING_DOMAIN_WWW__|${{ env.STAGING_DOMAIN_WWW }}|g" k8s/staging/ingress.yaml
           sed -i "s|__OLD_STAGING_DOMAIN__|${{ env.OLD_STAGING_DOMAIN }}|g" k8s/staging/ingress.yaml
+          sed -i "s|__OLD_STAGING_DOMAIN_WWW__|${{ env.OLD_STAGING_DOMAIN_WWW }}|g" k8s/staging/ingress.yaml
           
           kubectl apply -f k8s/staging/postgres.yaml
           kubectl apply -f k8s/staging/webpage.yaml
