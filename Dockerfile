@@ -28,9 +28,9 @@ COPY . .
 
 # Set environment variable for build
 ARG SKIP_ENV_VALIDATION
-ENV SKIP_ENV_VALIDATION=${SKIP_ENV_VALIDATION}
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV production
+ENV SKIP_ENV_VALIDATION=${SKIP_ENV_VALIDATION:-1}
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
 # Generate Prisma Client
 RUN pnpm exec prisma generate
@@ -42,8 +42,8 @@ RUN pnpm build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -67,8 +67,8 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
 
