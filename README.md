@@ -1,18 +1,18 @@
-# Streamline Account - Authentication Portal
+# Plandera Account - Authentication Portal
 
-This is the centralized authentication and application launcher for the Streamline ecosystem. It provides a unified account system that can be used across multiple Streamline applications, starting with the Streamline Scheduler.
+This is the centralized authentication and application launcher for the Plandera ecosystem. It provides a unified account system that can be used across multiple Plandera applications.
 
 ## Features
 
-- 🔐 **Centralized Authentication** - Single account for all Streamline applications
+- 🔐 **Centralized Authentication** - Single account for all Plandera applications
 - 📧 **Email & Password** - Secure authentication with Better Auth
 - 💳 **Stripe Payments** - Subscription management with Stripe integration
 - 🎨 **Modern Landing Page** - Beautiful, responsive design with dark mode
 - 💰 **Flexible Pricing** - Personal and business plans, managed and self-hosted options
 - 👤 **User Profile** - Dashboard to manage your account and launch applications
-- 🔗 **Application Launcher** - Quick access to all Streamline apps from one place
+- 🔗 **Application Launcher** - Quick access to all Plandera apps from one place
 - 🔒 **Session Management** - Secure session handling and validation API
-- 🌐 **Integration Ready** - Easy integration for Streamline applications
+- 🌐 **Integration Ready** - Easy integration for Plandera applications
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ This is the centralized authentication and application launcher for the Streamli
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd streamline-scheduler-webpage
+   cd plandera-webpage
    ```
 
 2. **Install dependencies**:
@@ -43,7 +43,7 @@ This is the centralized authentication and application launcher for the Streamli
    Edit `.env` and configure:
    - `DATABASE_URL`: Your PostgreSQL connection string
    - `BETTER_AUTH_SECRET`: Generate with `openssl rand -base64 32`
-   - `NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL`: URL of your Streamline Scheduler instance
+   - `NEXT_PUBLIC_PLANERA_URL`: URL of your Plandera application instance
    - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Your Stripe keys (see [STRIPE_SETUP.md](./STRIPE_SETUP.md))
 
 4. **Set up the database**:
@@ -100,14 +100,14 @@ src/
 - **Forms**: React Hook Form + Zod
 - **State Management**: React Context + tRPC
 
-## Integration with Streamline Applications
+## Integration with Plandera Applications
 
-See [INTEGRATION.md](./INTEGRATION.md) for detailed instructions on integrating Streamline applications with this authentication system.
+See [INTEGRATION.md](./INTEGRATION.md) for detailed instructions on integrating Plandera applications with this authentication system.
 
 ### Quick Integration Overview
 
 1. Configure your application with the auth server URL
-2. Add "Sign in with Streamline Account" option
+2. Add "Sign in with Plandera Account" option
 3. Redirect users to the auth server for login
 4. Validate session tokens using the API endpoint
 5. Access user information securely
@@ -140,7 +140,7 @@ See `.env.example` for all required environment variables.
 ### Required:
 - `DATABASE_URL` - PostgreSQL connection string
 - `BETTER_AUTH_SECRET` - Secret for session encryption
-- `NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL` - URL of Streamline Scheduler
+- `NEXT_PUBLIC_PLANERA_URL` - URL of Plandera application
 
 ### Optional:
 - `BETTER_AUTH_GITHUB_CLIENT_ID` - GitHub OAuth (optional)
@@ -151,7 +151,7 @@ See `.env.example` for all required environment variables.
 1. **Landing Page** → User sees features and benefits
 2. **Registration** → User creates account with email/password
 3. **Profile Dashboard** → User sees available applications
-4. **Launch Application** → Opens Streamline Scheduler (or other apps)
+4. **Launch Application** → Opens Plandera (or other apps)
 5. **Seamless Auth** → Applications validate session with auth server
 
 ## Security Features
@@ -215,11 +215,11 @@ docker compose logs -f
 
 ## Contributing
 
-This is part of the Streamline ecosystem. For contributing guidelines, please see the main Streamline Scheduler repository.
+This is part of the Plandera ecosystem. For contributing guidelines, please see the main Plandera repository.
 
 ## License
 
-Licensed for personal self-hosting only. See the main Streamline Scheduler repository for full license details.
+Licensed for personal self-hosting only. See the main Plandera repository for full license details.
 
 ## Documentation
 
@@ -233,4 +233,4 @@ Licensed for personal self-hosting only. See the main Streamline Scheduler repos
 
 - Documentation: Check this README and linked documentation files
 - Issues: Open an issue on GitHub
-- Streamline Scheduler: See the main scheduler repository
+- Plandera: See the main Plandera application repository

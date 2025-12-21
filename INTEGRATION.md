@@ -1,22 +1,22 @@
-# Streamline Account Integration Guide
+# Plandera Account Integration Guide
 
-This guide explains how to integrate Streamline applications with the centralized Streamline Account authentication system.
+This guide explains how to integrate Plandera applications with the centralized Plandera Account authentication system.
 
 ## Overview
 
-The Streamline Account system provides centralized authentication for all Streamline applications. Users create a single account that can be used across multiple applications like Streamline Scheduler, and future Streamline apps.
+The Plandera Account system provides centralized authentication for all Plandera applications. Users create a single account that can be used across multiple applications.
 
 ## Architecture
 
-- **Authentication Server**: This Next.js application (streamline-scheduler-webpage)
+- **Authentication Server**: This Next.js application (plandera-webpage)
 - **Better Auth**: Handles authentication with email/password and optional OAuth providers
-- **Client Applications**: Streamline Scheduler and other apps that use this authentication
+- **Client Applications**: Plandera and other apps that use this authentication
 
-## Integration Steps for Streamline Scheduler
+## Integration Steps for Plandera
 
 ### 1. Environment Variables
 
-In your Streamline Scheduler application, add:
+In your Plandera application, add:
 
 ```bash
 # .env.local
@@ -58,13 +58,13 @@ The authentication server provides an API endpoint for validating sessions:
 
 ### 3. Client-Side Integration
 
-In your Streamline Scheduler frontend, add a "Sign in with Streamline Account" option:
+In your Plandera frontend, add a "Sign in with Plandera Account" option:
 
 ```typescript
 // Example integration code
 import { authClient } from '@/lib/auth-client';
 
-export async function signInWithStreamline() {
+export async function signInWithPlandera() {
   // Redirect to the auth server login page with a callback URL
   const authServerUrl = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
   const callbackUrl = encodeURIComponent(window.location.origin + '/auth/callback');
@@ -99,12 +99,12 @@ export async function handleAuthCallback() {
 
 ### 4. User Flow
 
-1. User clicks "Sign in with Streamline Account" in Scheduler
+1. User clicks "Sign in with Plandera Account" in the application
 2. User is redirected to the auth server (this application)
 3. User logs in or registers
-4. User is redirected back to Scheduler with a session token
-5. Scheduler validates the token with the auth server
-6. User is authenticated in Scheduler
+4. User is redirected back to the application with a session token
+5. Application validates the token with the auth server
+6. User is authenticated in the application
 
 ## Security Considerations
 
@@ -117,7 +117,7 @@ export async function handleAuthCallback() {
 ## Future Enhancements
 
 - OAuth 2.0 / OpenID Connect support
-- Single Sign-On (SSO) across all Streamline applications
+- Single Sign-On (SSO) across all Plandera applications
 - Multi-factor authentication (MFA)
 - Session management dashboard
 - API key generation for third-party integrations

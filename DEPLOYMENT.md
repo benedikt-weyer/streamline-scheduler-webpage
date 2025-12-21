@@ -1,6 +1,6 @@
 # Deployment Guide - IONOS VPS with Ansible
 
-This guide explains how to deploy the Streamline Scheduler webpage to an IONOS VPS using Ansible for automated, reproducible deployments.
+This guide explains how to deploy the Plandera webpage to an IONOS VPS using Ansible for automated, reproducible deployments.
 
 ## Table of Contents
 
@@ -54,7 +54,7 @@ pip install ansible
 ### 2. Install Ansible Collections
 
 ```bash
-cd streamline-scheduler-webpage
+cd plandera-webpage
 ansible-galaxy collection install -r ansible/requirements.yml
 ```
 

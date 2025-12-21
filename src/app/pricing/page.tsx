@@ -292,7 +292,7 @@ export default function PricingPage() {
               </CardContent>
               <CardFooter>
                 <Button className="w-full" variant="outline" asChild>
-                  <Link href="https://github.com/yourusername/streamline-scheduler">
+                  <Link href="https://github.com/yourusername/plandera">
                     View on GitHub
                   </Link>
                 </Button>
@@ -379,7 +379,7 @@ export default function PricingPage() {
       {/* Features Comparison */}
       <section className="border-t py-20">
         <div className="container mx-auto max-w-screen-2xl px-4">
-          <h2 className="mb-12 text-center text-3xl font-bold">Why Choose Streamline?</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold">Why Choose Plandera?</h2>
           
           <div className="grid gap-8 md:grid-cols-3">
             <div className="flex flex-col items-center text-center">
@@ -493,7 +493,7 @@ export default function PricingPage() {
         <div className="container mx-auto max-w-screen-2xl px-4">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
-              © 2025 Streamline. Licensed for personal self-hosting.
+              © 2025 Plandera. Licensed for personal self-hosting.
             </p>
             <div className="flex gap-4">
               <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">

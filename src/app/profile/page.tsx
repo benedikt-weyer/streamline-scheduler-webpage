@@ -93,7 +93,7 @@ export default function ProfilePage() {
   };
 
   const handleLaunchScheduler = () => {
-    window.open(env.NEXT_PUBLIC_STREAMLINE_SCHEDULER_URL as string, "_blank");
+    window.open(env.NEXT_PUBLIC_PLANDERA_URL as string, "_blank");
   };
 
   const handleSyncSubscription = async () => {
@@ -217,13 +217,13 @@ export default function ProfilePage() {
         <h2 className="mb-6 text-2xl font-semibold">Your Applications</h2>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Streamline Scheduler App Card */}
+            {/* Plandera App Card */}
             <Card className="group transition-all hover:shadow-lg">
               <CardHeader>
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">
                   <Calendar className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle>Streamline Scheduler</CardTitle>
+                <CardTitle>Plandera</CardTitle>
                 <CardDescription>
                   Manage your calendar and tasks with end-to-end encryption
                 </CardDescription>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                 </div>
                 <CardTitle>More Apps Coming Soon</CardTitle>
                 <CardDescription>
-                  Stay tuned for more Streamline applications
+                  Stay tuned for more Plandera applications
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -402,7 +402,7 @@ export default function ProfilePage() {
               <CardHeader>
                 <CardTitle>No Active Subscription</CardTitle>
                 <CardDescription>
-                  Choose a plan to unlock premium features and support Streamline development.
+                  Choose a plan to unlock premium features and support Plandera development.
                 </CardDescription>
               </CardHeader>
               <CardFooter className="flex flex-col gap-3 sm:flex-row">

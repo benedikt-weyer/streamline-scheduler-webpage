@@ -73,7 +73,7 @@ export default function RegisterPage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
             <CardDescription>
-              Create your Streamline account to access all applications
+              Create your Plandera account to access all applications
             </CardDescription>
           </CardHeader>
           <CardContent>

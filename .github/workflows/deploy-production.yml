@@ -6,7 +6,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/planera-webpage
+  IMAGE_NAME: ${{ github.repository_owner }}/plandera-webpage
+  NEXT_PUBLIC_PLANDERA_URL: ${{ vars.NEXT_PUBLIC_PLANDERA_URL_PRODUCTION }}
 
 jobs:
   deploy-to-production:
@@ -45,6 +46,9 @@ jobs:
 
       - name: Deploy to production
         run: |
+          # Replace NEXT_PUBLIC_PLANDERA_URL in manifest
+          sed -i "s|__NEXT_PUBLIC_PLANDERA_URL__|${{ env.NEXT_PUBLIC_PLANDERA_URL }}|g" k8s/production/webpage.yaml
+          
           kubectl apply -f k8s/production/postgres.yaml
           kubectl apply -f k8s/production/webpage.yaml
           kubectl apply -f k8s/production/ingress.yaml

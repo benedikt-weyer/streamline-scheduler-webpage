@@ -1,6 +1,6 @@
 # Stripe Payment Integration Setup Guide
 
-This guide walks you through setting up Stripe payments for the Streamline Account platform.
+This guide walks you through setting up Stripe payments for the Plandera Account platform.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This guide walks you through setting up Stripe payments for the Streamline Accou
 First, update your database schema to include the subscription model:
 
 ```bash
-cd streamline-scheduler-webpage
+cd plandera-webpage
 pnpm db:push
 ```
 

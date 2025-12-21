@@ -56,7 +56,7 @@ export default function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="ghost" className="gap-2 text-lg" asChild>
-              <Link href="https://github.com/yourusername/streamline-scheduler" target="_blank">
+              <Link href="https://github.com/yourusername/plandera" target="_blank">
                 <Github className="h-5 w-5" />
                 GitHub
               </Link>
@@ -253,7 +253,7 @@ export default function Home() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="gap-2" asChild>
-                <Link href="https://github.com/yourusername/streamline-scheduler" target="_blank">
+                <Link href="https://github.com/yourusername/plandera" target="_blank">
                   <Github className="h-5 w-5" />
                   View Documentation
                 </Link>
@@ -264,8 +264,8 @@ export default function Home() {
               <p className="mb-4 text-sm font-semibold">Quick Start with Docker Compose</p>
               <div className="overflow-x-auto rounded bg-muted p-4 text-left">
                 <code className="text-sm">
-                  git clone https://github.com/yourusername/streamline-scheduler.git<br />
-                  cd streamline-scheduler<br />
+                  git clone https://github.com/yourusername/plandera.git<br />
+                  cd plandera<br />
                   docker-compose up -d
                 </code>
               </div>
@@ -279,7 +279,7 @@ export default function Home() {
         <div className="container mx-auto max-w-screen-2xl px-4">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
-              © 2025 Streamline Scheduler. Licensed for personal self-hosting only.
+              © 2025 Plandera. Licensed for personal self-hosting only.
             </p>
             <div className="flex gap-4">
               <Link

@@ -82,7 +82,7 @@ export default function LoginPage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
             <CardDescription>
-              Sign in to your Streamline account
+              Sign in to your Plandera account
             </CardDescription>
           </CardHeader>
           <CardContent>

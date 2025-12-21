@@ -77,8 +77,13 @@ spec:
             secretKeyRef:
               name: webpage-secrets
               key: STRIPE_WEBHOOK_SECRET
-        - name: NEXT_PUBLIC_APP_URL
-          value: https://app.planera.app
+        - name: NEXT_PUBLIC_PLANDERA_URL
+          value: __NEXT_PUBLIC_PLANDERA_URL__
+        - name: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: webpage-secrets
+              key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
         - name: NODE_ENV
           valueFrom:
             configMapKeyRef:

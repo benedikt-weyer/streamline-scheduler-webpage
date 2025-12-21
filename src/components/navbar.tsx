@@ -41,7 +41,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold">Streamline</span>
+            <span className="text-xl font-bold">Plandera</span>
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
             <Link href="/pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">

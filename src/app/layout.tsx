@@ -7,7 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { TRPCReactProvider } from "@/trpc/react";
 
 export const metadata: Metadata = {
-  title: "Streamline Scheduler - Open Source Calendar & Todo List",
+  title: "Plandera - Open Source Calendar & Todo List",
   description: "Open source self-hostable calendar-todolist combo with end-to-end encryption. Privacy-focused and easy self-hosting.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
