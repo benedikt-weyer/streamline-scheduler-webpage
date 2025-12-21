@@ -5,7 +5,7 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function RebrandedPage() {
+export default function RenamedPage() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-background to-muted/30 p-4">
       <div className="mx-auto max-w-2xl text-center">
@@ -18,7 +18,7 @@ export default function RebrandedPage() {
 
         {/* Main Message */}
         <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
-          We've Rebranded!
+          We've Got a New Name!
         </h1>
         
         <Card className="mb-8 border-primary/20 bg-card/50 backdrop-blur">
@@ -73,27 +73,7 @@ export default function RebrandedPage() {
             </li>
           </ul>
         </div>
-
-        {/* Auto-redirect notice */}
-        <p className="mt-8 text-sm text-muted-foreground">
-          You will be automatically redirected to{" "}
-          <a href="https://plandera.com" className="font-medium text-primary hover:underline">
-            plandera.com
-          </a>{" "}
-          in 10 seconds...
-        </p>
       </div>
-
-      {/* Auto-redirect script */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            setTimeout(function() {
-              window.location.href = 'https://plandera.com';
-            }, 10000);
-          `,
-        }}
-      />
     </div>
   );
 }
