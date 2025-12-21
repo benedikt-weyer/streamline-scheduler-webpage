@@ -1,0 +1,82 @@
+name: Build Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (staging or production)'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: 'staging'
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-webpage:
+    name: Build Webpage Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image tags
+        id: tags
+        run: |
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            echo "tags=${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:staging-latest,${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:staging-${{ github.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "tags=${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:latest,${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push webpage image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+  summary:
+    name: Build Summary
+    needs: [build-webpage]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Build summary
+        run: |
+          echo "## 🐳 Docker Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Status:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Webpage**: ${{ needs.build-webpage.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Image:" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            echo "- \`${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:staging-latest\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- \`${{ env.REGISTRY }}/${{ github.repository_owner }}/planera-webpage:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
+

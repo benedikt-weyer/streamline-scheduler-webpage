@@ -1,0 +1,35 @@
+name: Deploy to Production (Orchestrator)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type "deploy-to-production" to confirm'
+        required: true
+        type: string
+
+jobs:
+  validate-input:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirmation }}" != "deploy-to-production" ]; then
+            echo "Error: Confirmation text does not match. Please type 'deploy-to-production' to confirm."
+            exit 1
+          fi
+
+  build-image:
+    name: Build Docker Image
+    needs: [validate-input]
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
+    with:
+      environment: production
+
+  deploy-to-production:
+    name: Deploy to Kubernetes
+    needs: [build-image]
+    uses: ./.github/workflows/deploy-production.yml
+    secrets: inherit
+
