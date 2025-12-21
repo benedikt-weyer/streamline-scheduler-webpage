@@ -36,4 +36,6 @@ jobs:
     needs: [build-image]
     uses: ./.github/workflows/deploy-production.yml
     secrets: inherit
+    with:
+      environment: production
 

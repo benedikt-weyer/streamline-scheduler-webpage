@@ -3,6 +3,12 @@ name: Deploy to Production
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      environment:
+        description: 'Environment name'
+        required: false
+        type: string
+        default: 'production'
 
 env:
   REGISTRY: ghcr.io

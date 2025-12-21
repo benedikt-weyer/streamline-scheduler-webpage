@@ -23,4 +23,6 @@ jobs:
     needs: [build-image]
     uses: ./.github/workflows/deploy-staging.yml
     secrets: inherit
+    with:
+      environment: staging
 

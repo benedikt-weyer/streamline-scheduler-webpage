@@ -3,6 +3,12 @@ name: Deploy to Staging
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      environment:
+        description: 'Environment name'
+        required: false
+        type: string
+        default: 'staging'
 
 env:
   REGISTRY: ghcr.io
